@@ -47,7 +47,7 @@
     background:#fff;border:1px solid var(--line);border-radius:999px;
     padding:5px 12px 5px 8px;
     cursor:pointer;transition:.2s;position:relative;
-    user-select:none;
+    user-select:none;white-space:nowrap;
   }
   .status-badge:hover{box-shadow:0 4px 12px -6px rgba(0,0,0,.12);transform:translateY(-1px)}
   .status-dot{
@@ -229,7 +229,11 @@
     .info-grid{grid-template-columns:1fr}
     .info-card.full{grid-column:auto}
     .info-card.research-card.expanded,.info-card.identity-card.expanded{grid-column:auto}
-    .edu-item{grid-template-columns:110px auto 1fr 80px;gap:8px;font-size:12px}
+    .edu-item{display:flex;flex-direction:column;gap:6px;padding:14px 0;text-align:center}
+    .edu-time{font-size:12px}
+    .edu-school{font-size:14px;font-weight:500}
+    .edu-major{font-size:13px}
+    .edu-logo{margin:0 auto 4px}
     .pub-item{flex-direction:column;gap:4px}
     .chat-body{height:340px}
     .chat-input{flex-direction:column}
@@ -669,7 +673,7 @@
   ];
 
   function getSavedStatus() {
-    return localStorage.getItem('ryp_status') || 'researching';
+    return localStorage.getItem('ryp_status') || 'free';
   }
   function saveStatus(id) {
     localStorage.setItem('ryp_status', id);
