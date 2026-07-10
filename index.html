@@ -156,10 +156,10 @@
   .info-card.full{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
 
   /* research expand card */
-  .info-card.research-card{transition:all .35s ease}
-  .info-card.research-card.expanded{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
+  .info-card.research-card,.info-card.identity-card{transition:all .35s ease}
+  .info-card.research-card.expanded,.info-card.identity-card.expanded{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
   .research-expand{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);animation:fadeIn .3s ease}
-  .info-card.research-card.expanded .research-expand{display:block}
+  .info-card.research-card.expanded .research-expand,.info-card.identity-card.expanded .research-expand{display:block}
   .research-expand .pub-title{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
   .research-topic{margin-bottom:18px}
   .research-topic .rt-label{font-size:12px;color:var(--green);font-weight:600;margin-bottom:4px}
@@ -171,14 +171,11 @@
   .pub-body .pub-journal{font-weight:600;color:var(--blue-deep)}
   .pub-body .pub-meta{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
   .expand-hint{font-size:11px;color:var(--green);font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px;transition:.2s}
-  .info-card.research-card.expanded .expand-hint{color:var(--ink-soft)}
+  .info-card.research-card.expanded .expand-hint,.info-card.identity-card.expanded .expand-hint{color:var(--ink-soft)}
   .expand-hint .eh-arrow{display:inline-block;transition:.25s;font-size:10px}
-  .info-card.research-card.expanded .expand-hint .eh-arrow{transform:rotate(180deg)}
+  .info-card.research-card.expanded .expand-hint .eh-arrow,.info-card.identity-card.expanded .expand-hint .eh-arrow{transform:rotate(180deg)}
 
-  /* education card */
- .edu-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;transition:.25s;position:relative;overflow:hidden;margin-bottom:80px}
-  .edu-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
-  .edu-card .label{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+  /* edu list (inside identity expand) */
   .edu-item{display:grid;grid-template-columns:  140px auto 1fr 150px;gap:25px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
   .edu-item:last-child{border-bottom:none}
   .edu-time{font-size:13px;color:var(--ink-soft);font-family:'Space Grotesk';text-align:left;line-height:1.5}
@@ -231,8 +228,8 @@
     .chips{justify-content:center}
     .info-grid{grid-template-columns:1fr}
     .info-card.full{grid-column:auto}
-    .info-card.research-card.expanded{grid-column:auto}
-    .edu-item{grid-template-columns:110px auto 1fr 100px;gap:8px}
+    .info-card.research-card.expanded,.info-card.identity-card.expanded{grid-column:auto}
+    .edu-item{grid-template-columns:110px auto 1fr 80px;gap:8px;font-size:12px}
     .pub-item{flex-direction:column;gap:4px}
     .chat-body{height:340px}
     .chat-input{flex-direction:column}
@@ -291,10 +288,15 @@
   <!-- INFO -->
   <div class="section-title" id="aboutTitle">关于我</div>
   <section class="info-grid">
-    <div class="info-card">
+    <div class="info-card clickable identity-card" id="identityCard" onclick="toggleIdentity()">
       <div class="ic">01</div>
       <div class="label" data-key="labelIdentity">身份</div>
       <div class="value" data-key="valueIdentity">中国石油大学，材料工程，博士二年级（2025级）</div>
+      <div class="expand-hint"><span data-key="eduExpandHint">点击展开教育背景</span> <span class="eh-arrow">▾</span></div>
+      <div class="research-expand" id="identityExpand">
+        <div class="pub-title" data-key="eduLabel">高等教育</div>
+        <div id="eduList"></div>
+      </div>
     </div>
     <div class="info-card clickable research-card" id="researchCard" onclick="toggleResearch()">
       <div class="ic">02</div>
@@ -328,12 +330,6 @@
     </div>
   </section>
 
-  <!-- EDUCATION -->
-  <div class="section-title" id="eduTitle">教育背景</div>
-  <section class="edu-card">
-    <div class="label" data-key="eduLabel">高等教育</div>
-    <div id="eduList"></div>
-  </section>
 
   <!-- CHAT -->
   <div class="section-title" id="chatSectionTitle">问我的数字分身</div>
@@ -394,7 +390,7 @@
       eduLabel: '高等教育',
       eduList: [
         {time: '2025.09 — 至今', school: '中国石油大学', major: '材料工程', degree: '工程博士', logo: 'https://s1.imagehub.cc/images/2026/07/10/d8282f879d4968f12f0fa3f7eadd5ab3.png', logoH: 29},
-        {time: '2025.01 — 2025.05', school: '美国塔尔萨大学', major: '化学工程', degree: '国家公派留学', logo: 'https://s1.imagehub.cc/images/2026/07/10/eba5953d935d03b7cda03717c7446274.png', logoH: 36},
+        {time: '2025.01 — 2025.05', school: '美国塔尔萨大学', major: '化学工程', degree: '国家公派留学', logo: 'https://s1.imagehub.cc/images/2026/07/11/d0c8e211334ee3b3fa85298caec69fef.png', logoH: 36},
         {time: '2021.09 — 2025.06', school: '中国石油大学', major: '新能源科学与工程', degree: '本科', logo: 'https://s1.imagehub.cc/images/2026/07/10/d8282f879d4968f12f0fa3f7eadd5ab3.png', logoH: 29}
       ],
       chatSectionTitle: '问我的数字分身',
@@ -411,6 +407,7 @@
       jumpDesc: '直接对话',
       jumpBtn: '开始 →',
       expandHint: '点击展开详情',
+      eduExpandHint: '点击展开教育背景',
       pubResearchTopic: '研究主题',
       pubResearchText: '人工智能驱动科学研究（AI for Science）—— 聚焦石墨烯材料的计算模拟与性能预测。利用机器学习和深度学习加速材料设计、缺陷识别与电子结构分析。',
       pubSection: '发表文章',
@@ -452,7 +449,7 @@
       eduLabel: 'Higher Education',
       eduList: [
         {time: '2025.09 — Present', school: 'China University of Petroleum, Beijing', major: 'Materials Engineering', degree: 'PhD in Engineering', logo: 'https://s1.imagehub.cc/images/2026/07/10/d8282f879d4968f12f0fa3f7eadd5ab3.png', logoH: 29},
-        {time: '2025.01 — 2025.05', school: 'University of Tulsa, Oklahoma, USA', major: 'Chemical Engineering', degree: 'CSC Scholarship Exchange', logo: 'https://s1.imagehub.cc/images/2026/07/10/eba5953d935d03b7cda03717c7446274.png', logoH: 36},
+        {time: '2025.01 — 2025.05', school: 'University of Tulsa, Oklahoma, USA', major: 'Chemical Engineering', degree: 'CSC Scholarship Exchange', logo: 'https://s1.imagehub.cc/images/2026/07/11/d0c8e211334ee3b3fa85298caec69fef.png', logoH: 36},
         {time: '2021.09 — 2025.06', school: 'China University of Petroleum, Beijing', major: 'New Energy Science & Engineering', degree: 'Bachelor', logo: 'https://s1.imagehub.cc/images/2026/07/10/d8282f879d4968f12f0fa3f7eadd5ab3.png', logoH: 29}
       ],
       chatSectionTitle: 'ask my digital twin',
@@ -469,6 +466,7 @@
       jumpDesc: 'Jump to chat',
       jumpBtn: 'Go →',
       expandHint: 'Click to expand',
+      eduExpandHint: 'Click for education',
       pubResearchTopic: 'Research Focus',
       pubResearchText: 'AI for Science — computational simulation and property prediction for graphene materials. Leveraging machine learning and deep learning to accelerate materials design, defect identification, and electronic structure analysis.',
       pubSection: 'Publications',
@@ -530,6 +528,24 @@
         : i18n[currentLang].expandHint + ' <span class="eh-arrow">▾</span>';
     }
   }
+  let identityExpanded = false;
+  function toggleIdentity() {
+    const card = document.getElementById('identityCard');
+    if (!card) return;
+    identityExpanded = !identityExpanded;
+    if (identityExpanded) {
+      card.classList.add('expanded');
+      renderEduList(currentLang);
+    } else {
+      card.classList.remove('expanded');
+    }
+    const hint = document.querySelector('#identityCard [data-key="eduExpandHint"]');
+    if (hint) {
+      hint.innerHTML = identityExpanded
+        ? (currentLang === 'zh' ? '收起' : 'Collapse') + ' <span class="eh-arrow">▾</span>'
+        : i18n[currentLang].eduExpandHint + ' <span class="eh-arrow">▾</span>';
+    }
+  }
 
   function renderEduList(lang) {
     const t = i18n[lang];
@@ -562,8 +578,6 @@
     document.getElementById('heroTitle').innerHTML = t.heroTitle;
     document.getElementById('heroTagline').textContent = t.heroTagline;
     document.getElementById('aboutTitle').textContent = t.aboutTitle;
-    document.getElementById('eduTitle').textContent = t.eduTitle;
-
     const chipsContainer = document.getElementById('heroChips');
     chipsContainer.innerHTML = t.chips.map(c => `<span class="chip">${c}</span>`).join('');
 
@@ -572,7 +586,7 @@
       if (t[key]) el.innerHTML = t[key];
     });
 
-    renderEduList(lang);
+    if (identityExpanded) renderEduList(lang);
     if (researchExpanded) renderPubList(lang);
 
     document.getElementById('sideAva').textContent = t.chatHeadName;
