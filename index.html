@@ -149,10 +149,31 @@
  .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:80px}
   .info-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;transition:.25s;position:relative;overflow:hidden}
   .info-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+  .info-card.clickable{cursor:pointer}
   .info-card .label{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
   .info-card .value{font-size:16px;font-weight:500;color:var(--ink)}
   .info-card .ic{position:absolute;right:18px;top:18px;font-family:'Space Grotesk';font-weight:700;color:var(--mint);font-size:34px;line-height:1}
   .info-card.full{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
+
+  /* research expand card */
+  .info-card.research-card{transition:all .35s ease}
+  .info-card.research-card.expanded{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
+  .research-expand{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);animation:fadeIn .3s ease}
+  .info-card.research-card.expanded .research-expand{display:block}
+  .research-expand .pub-title{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
+  .research-topic{margin-bottom:18px}
+  .research-topic .rt-label{font-size:12px;color:var(--green);font-weight:600;margin-bottom:4px}
+  .research-topic .rt-text{font-size:14px;color:var(--ink);line-height:1.5}
+  .pub-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #edf5f5}
+  .pub-item:last-child{border-bottom:none}
+  .pub-num{font-family:"Space Grotesk";font-weight:700;font-size:13px;color:var(--green);flex-shrink:0;min-width:22px}
+  .pub-body{font-size:13px;color:var(--ink);line-height:1.55}
+  .pub-body .pub-journal{font-weight:600;color:var(--blue-deep)}
+  .pub-body .pub-meta{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .expand-hint{font-size:11px;color:var(--green);font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px;transition:.2s}
+  .info-card.research-card.expanded .expand-hint{color:var(--ink-soft)}
+  .expand-hint .eh-arrow{display:inline-block;transition:.25s;font-size:10px}
+  .info-card.research-card.expanded .expand-hint .eh-arrow{transform:rotate(180deg)}
 
   /* education card */
  .edu-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;transition:.25s;position:relative;overflow:hidden;margin-bottom:80px}
@@ -200,8 +221,8 @@
   .chat-input button:hover{transform:translateY(-1px);box-shadow:0 10px 20px -8px rgba(11,111,184,.5)}
   .chat-input button:disabled{opacity:.5;cursor:not-allowed}
 
-  footer{text-align:center;margin-top:48px;color:var(--ink-soft);font-size:13px}
-  footer .quote{font-family:'Space Grotesk';font-weight:500;color:var(--blue-deep);margin-bottom:6px}
+ footer{text-align:center;margin-top:48px;color:var(--ink-soft);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:10px}
+ footer .quote{font-family:'Space Grotesk';font-weight:500;color:var(--blue-deep)}
 
   @media (max-width:899px){
     .wrap{padding:24px 16px 60px}
@@ -210,7 +231,9 @@
     .chips{justify-content:center}
     .info-grid{grid-template-columns:1fr}
     .info-card.full{grid-column:auto}
+    .info-card.research-card.expanded{grid-column:auto}
     .edu-item{grid-template-columns:110px auto 1fr 100px;gap:8px}
+    .pub-item{flex-direction:column;gap:4px}
     .chat-body{height:340px}
     .chat-input{flex-direction:column}
     .chat-input button{padding:13px}
@@ -225,7 +248,7 @@
 <div class="wrap">
 
   <div class="topbar">
-    <div class="logo">ryp.<span>dev</span><span class="dot"></span></div>
+     <div class="logo">ryp.<span>site</span><span class="dot"></span></div>
     <div style="display:flex;align-items:center;gap:14px">
       <div class="lang-switch">
         <button class="lang-btn active" data-lang="zh" onclick="setLang('zh')">中文</button>
@@ -273,10 +296,19 @@
       <div class="label" data-key="labelIdentity">身份</div>
       <div class="value" data-key="valueIdentity">中国石油大学，材料工程，博士二年级（2025级）</div>
     </div>
-    <div class="info-card">
+    <div class="info-card clickable research-card" id="researchCard" onclick="toggleResearch()">
       <div class="ic">02</div>
       <div class="label" data-key="labelNow">正在研究</div>
       <div class="value" data-key="valueNow">人工智能驱动科学研究 —— 聚焦石墨烯 <span style="color:var(--green)">（转向中）</span></div>
+      <div class="expand-hint"><span data-key="expandHint">点击展开详情</span> <span class="eh-arrow">▾</span></div>
+      <div class="research-expand" id="researchExpand">
+        <div class="research-topic">
+          <div class="rt-label" data-key="pubResearchTopic">研究主题</div>
+          <div class="rt-text" data-key="pubResearchText">人工智能驱动科学研究（AI for Science）—— 聚焦石墨烯材料的计算模拟与性能预测。利用机器学习和深度学习加速材料设计、缺陷识别与电子结构分析。</div>
+        </div>
+        <div class="pub-title" data-key="pubSection">发表文章</div>
+        <div class="pub-list" id="pubList"></div>
+      </div>
     </div>
     <div class="info-card">
       <div class="ic">03</div>
@@ -334,7 +366,8 @@
 
   <footer>
     <div class="quote" id="footerQuote">保持好奇，保持流动。</div>
-    <div id="footerCopy">© 饶渝鹏 · 由Vibe Vibe提供创意，GLM-5.2、Kimi辅助制作</div>
+    <div class="email"><a href="mailto:2025315703@student.cup.edu.cn" style="color:var(--blue-deep);text-decoration:none;font-weight:500">2025315703@student.cup.edu.cn</a></div>
+    <div id="footerCopy">© 饶渝鹏 · 由Vibe Vibe提供创意，GLM-5.2、Kimi-2.6，DeepSeek V4 驱动Codex辅助制作</div>
   </footer>
 </div>
 
@@ -372,11 +405,20 @@
       inputPlaceholder: '输入你想问数字分身的问题…',
       sendBtn: '发送 →',
       footerQuote: '保持好奇，保持流动。',
-      footerCopy: '© 饶渝鹏 · 由Vibe Vibe提供创意，GLM-5.2、Kimi辅助制作',
+      footerCopy: '© 饶渝鹏 · 由Vibe Vibe提供创意，GLM-5.2、Kimi-2.6，DeepSeek V4 驱动Codex辅助制作',
       quickQs: ['你的研究方向是什么？', '你去过哪些地方？', '你最大的梦想是什么？'],
       jumpTitle: '问分身',
       jumpDesc: '直接对话',
       jumpBtn: '开始 →',
+      expandHint: '点击展开详情',
+      pubResearchTopic: '研究主题',
+      pubResearchText: '人工智能驱动科学研究（AI for Science）—— 聚焦石墨烯材料的计算模拟与性能预测。利用机器学习和深度学习加速材料设计、缺陷识别与电子结构分析。',
+      pubSection: '发表文章',
+      publications: [
+        {journal: '<span class="pub-journal">Coordination Chemistry Reviews</span>, 2024, 514: 215899.', meta: '(Q1，IF=20.6) 参与写作', title: 'Advanced noble-metal/transition-metal/metal-free electrocatalysts for hydrogen evolution reaction in water-electrolysis for hydrogen production'},
+        {journal: '<span class="pub-journal">Chemical Engineering Journal</span>, 2025, 514: 163139.', meta: '(Q1，IF=12.5) 第三作者', title: 'Construction of built-in electric field within ZIF-67/BCN heterojunction for high selectivity photocatalytic CO₂ conversion'},
+        {journal: '<span class="pub-journal">Nano Research</span>, 2026, 19(1): 94908042.', meta: '(Q1，IF=9.4) 参与写作', title: 'Metal organic frameworks for photocatalytic CO₂ reduction to CO with high selectivity: Mechanism and strategy'}
+      ],
       replies: [
         {keys: ['研究','方向','石墨烯','材料','博士','人工智能','科学','科研','项目'], a: '我现在是材料工程博士生，主攻方向是<em>石墨烯领域的人工智能驱动科学研究</em>——让神经网络帮我分析缺陷、堆叠、输运这些没法塞进漂亮公式里的复杂问题。状态？非常"流动中"。🌊'},
         {keys: ['去过','旅行','地方','哪里','旅游','出行','游历'], a: '好问题！只要有会议或便宜机票当借口，我就会出发。对我来说山 > 海，而且路上几乎都会拍胶片。你去过哪里？说不定我会加入清单。📷✈️'},
@@ -421,11 +463,20 @@
       inputPlaceholder: 'Type a question for the twin…',
       sendBtn: 'Send →',
       footerQuote: 'Stay curious, stay in flux.',
-      footerCopy: '© Rao Yupeng · Creative direction by Vibe Vibe. Assisted by GLM-5.2 &amp; Kimi.',
+      footerCopy: '© Rao Yupeng · Creative direction by Vibe Vibe. Assisted by GLM-5.2, Kimi-2.6, and DeepSeek V4 via Codex.',
       quickQs: ['What\'s your research?', 'Have you been anywhere?', 'What\'s your biggest dream?'],
       jumpTitle: 'Ask Twin',
       jumpDesc: 'Jump to chat',
       jumpBtn: 'Go →',
+      expandHint: 'Click to expand',
+      pubResearchTopic: 'Research Focus',
+      pubResearchText: 'AI for Science — computational simulation and property prediction for graphene materials. Leveraging machine learning and deep learning to accelerate materials design, defect identification, and electronic structure analysis.',
+      pubSection: 'Publications',
+      publications: [
+        {journal: '<span class="pub-journal">Coordination Chemistry Reviews</span>, 2024, 514: 215899.', meta: '(Q1, IF=20.6) Co-author', title: 'Advanced noble-metal/transition-metal/metal-free electrocatalysts for hydrogen evolution reaction in water-electrolysis for hydrogen production'},
+        {journal: '<span class="pub-journal">Chemical Engineering Journal</span>, 2025, 514: 163139.', meta: '(Q1, IF=12.5) Third author', title: 'Construction of built-in electric field within ZIF-67/BCN heterojunction for high selectivity photocatalytic CO₂ conversion'},
+        {journal: '<span class="pub-journal">Nano Research</span>, 2026, 19(1): 94908042.', meta: '(Q1, IF=9.4) Co-author', title: 'Metal organic frameworks for photocatalytic CO₂ reduction to CO with high selectivity: Mechanism and strategy'}
+      ],
       replies: [
         {keys: ['research','study','graphene','materials','phd','science','ai for','project'], a: 'Right now I\'m a PhD student at China University of Petroleum (Beijing), and my main focus is <em>AI for Science on Graphene</em> — basically letting neural nets help me reason about defects, stacking, transport, the messy stuff that doesn\'t fit in a tidy equation. Status? Very much "in flux". 🌊'},
         {keys: ['been','travel','where','place','trip','tour','visit'], a: 'Oh I love this question. I travel whenever a conference or a cheap flight gives me an excuse. Mountains > beaches for me, and I almost always shoot film on the way. Where have <em>you</em> been? Maybe I\'ll add it to the list. 📷✈️'},
@@ -444,6 +495,40 @@
 
   function scrollToChat() {
     document.getElementById('chatSectionTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  let researchExpanded = false;
+  function renderPubList(lang) {
+    const t = i18n[lang];
+    const container = document.getElementById('pubList');
+    if (!container) return;
+    container.innerHTML = t.publications.map((p, i) => {
+      return '<div class="pub-item">' +
+        '<div class="pub-num">' + String(i+1).padStart(2,'0') + '</div>' +
+        '<div class="pub-body">' +
+          '<div>' + p.title + '</div>' +
+          '<div class="pub-journal">' + p.journal + '</div>' +
+          '<div class="pub-meta">' + p.meta + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+  function toggleResearch() {
+    const card = document.getElementById('researchCard');
+    if (!card) return;
+    researchExpanded = !researchExpanded;
+    if (researchExpanded) {
+      card.classList.add('expanded');
+      renderPubList(currentLang);
+    } else {
+      card.classList.remove('expanded');
+    }
+    const hint = document.querySelector('[data-key="expandHint"]');
+    if (hint) {
+      hint.innerHTML = researchExpanded
+        ? (currentLang === 'zh' ? '收起详情' : 'Collapse') + ' <span class="eh-arrow">▾</span>'
+        : i18n[currentLang].expandHint + ' <span class="eh-arrow">▾</span>';
+    }
   }
 
   function renderEduList(lang) {
@@ -488,6 +573,7 @@
     });
 
     renderEduList(lang);
+    if (researchExpanded) renderPubList(lang);
 
     document.getElementById('sideAva').textContent = t.chatHeadName;
     document.querySelector('.chat-head .ava').textContent = t.chatHeadName;
