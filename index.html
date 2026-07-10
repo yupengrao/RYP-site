@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>饶渝鹏 · 数字分身</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4fbfb;
+    --ink:#0d2b2b;
+    --ink-soft:#3a5a5a;
+    --line:#d9ecec;
+    --card:#ffffff;
+    --blue:#1e9bd8;
+    --blue-deep:#0b6fb8;
+    --green:#0fbf9f;
+    --mint:#d8f5ee;
+    --sky:#e3f4fb;
+    --shadow:0 18px 40px -24px rgba(11,111,184,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  body{font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif}
+  body[lang="en"]{font-family:'Poppins','Space Grotesk',system-ui,sans-serif}
+  body{
+    background:
+      radial-gradient(1200px 600px at 90% -10%, var(--sky), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, var(--mint), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 80px}
+
+  /* top bar */
+ .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom: 48px}
+  .logo{font-family:'Space Grotesk';font-weight:700;letter-spacing:.5px;font-size:18px}
+  .logo span{color:var(--green)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(15,191,159,.18);animation:pulse 2.4s infinite;vertical-align:middle;margin-left:6px}
+  @keyframes pulse{50%{transform:scale(1.3);opacity:.6}}
+    /* status badge */
+  .status-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12.5px;font-weight:500;
+    background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:5px 12px 5px 8px;
+    cursor:pointer;transition:.2s;position:relative;
+    user-select:none;
+  }
+  .status-badge:hover{box-shadow:0 4px 12px -6px rgba(0,0,0,.12);transform:translateY(-1px)}
+  .status-dot{
+    width:8px;height:8px;border-radius:50%;flex-shrink:0;
+    background:#1e9bd8;box-shadow:0 0 0 3px rgba(30,155,216,.18);
+    transition:.25s;
+  }
+  .status-label{transition:.25s;color:var(--ink)}
+  .status-chevron{opacity:.4;margin-left:2px;transition:.2s;color:var(--ink-soft)}
+  .status-badge:hover .status-chevron{opacity:.7}
+  .status-picker{
+    display:none;position:absolute;top:calc(100% + 6px);right:0;
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:6px;min-width:160px;
+    box-shadow:0 12px 32px -12px rgba(0,0,0,.18);
+    z-index:200;animation:fadeIn .15s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}}
+  .sp-item{
+    display:flex;align-items:center;gap:8px;padding:8px 10px;
+    border-radius:10px;cursor:pointer;font-size:13px;color:var(--ink);transition:.15s;
+  }
+  .sp-item:hover{background:var(--bg)}
+  .sp-active{font-weight:600}
+  .sp-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .sp-check{margin-left:auto;font-size:11px;color:var(--green);font-weight:700}
+
+  /* language switcher */
+  .lang-switch{display:flex;gap:6px;align-items:center}
+  .lang-btn{font-family:inherit;font-size:13px;font-weight:500;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;transition:.2s}
+  .lang-btn:hover{border-color:var(--green);color:var(--blue-deep)}
+  .lang-btn.active{background:linear-gradient(120deg,var(--blue),var(--green));color:#fff;border-color:transparent;box-shadow:0 4px 12px -4px rgba(11,111,184,.35)}
+
+  /* hero */
+ .hero{display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center;margin-bottom:64px}
+  .avatar{
+     width:168px;height:168px;border-radius:50%;
+    background-image:url('https://s1.imagehub.cc/images/2026/07/10/2234a3b811a33cda68d9245b2cdc68da.jpg');
+    background-size:cover;
+    background-position:center;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .avatar::after{
+    content:"";position:absolute;inset:-6px;border-radius:50%;
+    border:1.5px dashed rgba(15,191,159,.25);
+    animation:spin 22s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hero h1{font-family:'Space Grotesk';font-size:clamp(38px,5.5vw,58px);letter-spacing:-.5px;font-weight:700;line-height:1.05;margin-bottom:6px}
+  .hero h1 em{font-style:normal;color:var(--blue-deep);background:linear-gradient(120deg,var(--blue-deep),var(--green));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .tagline{font-size:18px;color:var(--ink-soft);max-width:520px;line-height:1.6}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .chip{font-size:13px;padding:8px 18px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink-soft);transition:.2s;font-weight:500}
+  .chip:hover{border-color:var(--green);color:var(--blue-deep);transform:translateY(-2px);box-shadow:0 4px 12px -6px rgba(15,191,159,.25)}
+
+  /* side widget - fixed on right */
+  .side-widget{
+    position:fixed;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    width:120px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:16px 12px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    z-index:100;
+    text-align:center;
+    transition:.25s;}
+  }  .side-widget:hover{
+    transform:translateY(-50%) translateX(-4px);
+    box-shadow:0 22px 48px -20px rgba(11,111,184,.4);
+    border-color:transparent;
+  }
+  .side-ava{
+    width:36px;height:36px;border-radius:50%;
+    background-image:url('https://s1.imagehub.cc/images/2026/07/10/2234a3b811a33cda68d9245b2cdc68da.jpg');
+    background-size:cover;
+    background-position:center;
+    margin:0 auto 10px;
+  }
+  .side-title{font-size:13px;font-weight:600;color:var(--blue-deep);margin-bottom:6px;line-height:1.3}
+  .side-desc{font-size:11px;color:var(--ink-soft);margin-bottom:12px;line-height:1.4}
+  .side-btn{
+    font-family:inherit;font-size:12px;font-weight:600;color:#fff;
+    background:linear-gradient(120deg,var(--blue),var(--green));
+    border:none;padding:6px 16px;border-radius:999px;cursor:pointer;
+    transition:.2s;pointer-events:none;
+  }
+  .side-widget:hover .side-btn{box-shadow:0 6px 14px -6px rgba(11,111,184,.4)}
+
+  /* info grid */
+  .section-title{font-family:'Space Grotesk';font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .section-title::after{content:"";flex:1;height:1px;background:var(--line)}
+ .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:80px}
+  .info-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;transition:.25s;position:relative;overflow:hidden}
+  .info-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+  .info-card .label{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+  .info-card .value{font-size:16px;font-weight:500;color:var(--ink)}
+  .info-card .ic{position:absolute;right:18px;top:18px;font-family:'Space Grotesk';font-weight:700;color:var(--mint);font-size:34px;line-height:1}
+  .info-card.full{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
+
+  /* education card */
+ .edu-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;transition:.25s;position:relative;overflow:hidden;margin-bottom:80px}
+  .edu-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+  .edu-card .label{font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+  .edu-item{display:grid;grid-template-columns:  140px auto 1fr 150px;gap:25px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .edu-item:last-child{border-bottom:none}
+  .edu-time{font-size:13px;color:var(--ink-soft);font-family:'Space Grotesk';text-align:left;line-height:1.5}
+  .edu-school{font-size:15px;font-weight:500;color:var(--ink);text-align:left;line-height:1.5}
+  .edu-major{font-size:13px;color:var(--ink-soft);text-align:left;line-height:1.5}
+  .edu-degree{font-size:12px;color:var(--green);font-weight:600;margin-top:2px}
+  .edu-logo{height:24px;width:auto;border-radius:4px;display:block;max-width:100%;margin:0 auto;object-fit:contain}
+
+  /* chat */
+  .chat-wrap{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
+  .chat-head{padding:20px 24px;background:linear-gradient(120deg,var(--blue-deep),var(--blue) 55%,var(--green));color:#fff;display:flex;align-items:center;gap:14px}
+  .chat-head .ava{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-family:'Space Grotesk';font-weight:700;font-size:16px;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.4)}
+  .chat-head h3{font-size:16px;font-weight:600}
+  .chat-head .sub{font-size:12.5px;opacity:.85}
+  .chat-body{height:380px;overflow-y:auto;padding:22px;background:
+    radial-gradient(600px 300px at 80% 0%, var(--mint), transparent 70%),
+    var(--bg);
+  }
+  .msg{display:flex;margin-bottom:14px;max-width:85%;animation:rise .4s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}}
+  .msg.bot{align-items:flex-start}
+  .msg.me{margin-left:auto;align-items:flex-end;flex-direction:row-reverse}
+  .bubble{padding:11px 15px;border-radius:16px;font-size:14.5px;line-height:1.55}
+  .msg.bot .bubble{background:#fff;border:1px solid var(--line);border-top-left-radius:4px}
+  .msg.me .bubble{background:linear-gradient(120deg,var(--blue),var(--green));color:#fff;border-top-right-radius:4px}
+  .typing{display:inline-flex;gap:4px;align-items:center}
+  .typing i{width:6px;height:6px;border-radius:50%;background:var(--ink-soft);opacity:.4;animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}
+  .typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{50%{opacity:1}}
+
+  .quick{display:flex;flex-wrap:wrap;gap:8px;padding:14px 22px;border-top:1px solid var(--line);background:#fff}
+  .quick button{font-family:inherit;font-size:13px;color:var(--blue-deep);background:var(--sky);border:1px solid transparent;padding:7px 14px;border-radius:999px;cursor:pointer;transition:.2s}
+  .quick button:hover{background:var(--mint);color:var(--ink);transform:translateY(-1px)}
+
+  .chat-input{display:flex;gap:10px;padding:14px 22px 22px;background:#fff}
+  .chat-input input{flex:1;font-family:inherit;font-size:15px;padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);outline:none;transition:.2s}
+  .chat-input input:focus{border-color:var(--green);background:#fff;box-shadow:0 0 0 4px rgba(15,191,159,.12)}
+  .chat-input button{font-family:inherit;font-weight:600;font-size:14px;color:#fff;background:linear-gradient(120deg,var(--blue),var(--green));border:none;padding:0 22px;border-radius:12px;cursor:pointer;transition:.2s;letter-spacing:.5px}
+  .chat-input button:hover{transform:translateY(-1px);box-shadow:0 10px 20px -8px rgba(11,111,184,.5)}
+  .chat-input button:disabled{opacity:.5;cursor:not-allowed}
+
+  footer{text-align:center;margin-top:48px;color:var(--ink-soft);font-size:13px}
+  footer .quote{font-family:'Space Grotesk';font-weight:500;color:var(--blue-deep);margin-bottom:6px}
+
+  @media (max-width:899px){
+    .wrap{padding:24px 16px 60px}
+    .hero{grid-template-columns:1fr;text-align:center;gap:24px;justify-items:center}
+    .hero h1{font-size:36px}
+    .chips{justify-content:center}
+    .info-grid{grid-template-columns:1fr}
+    .info-card.full{grid-column:auto}
+    .edu-item{grid-template-columns:110px auto 1fr 100px;gap:8px}
+    .chat-body{height:340px}
+    .chat-input{flex-direction:column}
+    .chat-input button{padding:13px}
+    .topbar{flex-wrap:wrap;gap:12px}
+    .lang-switch{order:-1;width:100%;justify-content:center}
+    .side-widget{display:none}
+  }
+</style>
+<base target="_blank">
+</head>
+<body lang="zh">
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="logo">ryp.<span>dev</span><span class="dot"></span></div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="zh" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      </div>
+      <div class="status-badge" id="statusBadge" onclick="toggleStatusPicker(event)">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-label" id="statusLabel">研究中</span>
+        <svg class="status-chevron" width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="status-picker" id="statusPicker"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="avatar"></div>
+    <div>
+      <h1 id="heroTitle">你好，我是 <em>饶渝鹏</em>。</h1>
+      <p class="tagline" id="heroTagline">很高兴认识你。</p>
+      <div class="chips" id="heroChips">
+        <span class="chip">🔬 材料工程博士生</span>
+        <span class="chip">📍 北京昌平</span>
+        <span class="chip">📷 摄影</span>
+        <span class="chip">✈️ 旅行</span>
+        <span class="chip">🏋️ 健身</span>
+        <span class="chip">🎵 音乐</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 右侧悬浮窗：始终可见 -->
+  <div class="side-widget" id="sideWidget" onclick="scrollToChat()">
+    <div class="side-ava"></div>
+    <div class="side-title" data-key="jumpTitle">问分身</div>
+    <div class="side-desc" data-key="jumpDesc">直接对话</div>
+    <button class="side-btn" data-key="jumpBtn" onclick="event.stopPropagation();scrollToChat()">开始 →</button>
+  </div>
+
+  <!-- INFO -->
+  <div class="section-title" id="aboutTitle">关于我</div>
+  <section class="info-grid">
+    <div class="info-card">
+      <div class="ic">01</div>
+      <div class="label" data-key="labelIdentity">身份</div>
+      <div class="value" data-key="valueIdentity">中国石油大学，材料工程，博士二年级（2025级）</div>
+    </div>
+    <div class="info-card">
+      <div class="ic">02</div>
+      <div class="label" data-key="labelNow">正在研究</div>
+      <div class="value" data-key="valueNow">人工智能驱动科学研究 —— 聚焦石墨烯 <span style="color:var(--green)">（转向中）</span></div>
+    </div>
+    <div class="info-card">
+      <div class="ic">03</div>
+      <div class="label" data-key="labelGood">擅长 / 关注</div>
+      <div class="value" data-key="valueGood">深度讨论 · 长程思考 · 跨领域连接</div>
+    </div>
+    <div class="info-card">
+      <div class="ic">04</div>
+      <div class="label" data-key="labelHobby">兴趣爱好</div>
+      <div class="value" data-key="valueHobby">摄影 · 人工智能 · 旅行 · 健身 · 音乐</div>
+    </div>
+    <div class="info-card full">
+      <div class="ic" style="color:var(--sky)">★</div>
+      <div class="label" data-key="labelTrait">一个记忆点</div>
+      <div class="value" style="font-size:20px;font-family:'Space Grotesk';font-weight:700;color:var(--blue-deep)" data-key="valueTrait">"暂时还不知道呢"</div>
+      <div style="font-size:13px;color:var(--ink-soft);margin-top:4px" data-key="valueTraitSub">—— 你可以问问我的数字分身这是什么意思。</div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <div class="section-title" id="eduTitle">教育背景</div>
+  <section class="edu-card">
+    <div class="label" data-key="eduLabel">高等教育</div>
+    <div id="eduList"></div>
+  </section>
+
+  <!-- CHAT -->
+  <div class="section-title" id="chatSectionTitle">问我的数字分身</div>
+  <section class="chat-wrap">
+    <div class="chat-head">
+      <div class="ava">渝</div>
+      <div>
+        <h3>渝鹏分身</h3>
+        <div class="sub" id="chatSub">基于渝鹏的风格训练 · 用他的语气回复</div>
+      </div>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+      <div class="msg bot">
+        <div class="bubble" id="welcomeMsg">嘿 👋 我是渝鹏的数字分身。问我的研究、去过的地方，或者任何你好奇的事。我会尽力模仿他的风格来回答。</div>
+      </div>
+    </div>
+
+    <div class="quick" id="quick">
+      <button data-q="你的研究方向是什么？">你的研究方向是什么？</button>
+      <button data-q="你去过哪些地方？">你去过哪些地方？</button>
+      <button data-q="你最大的梦想是什么？">你最大的梦想是什么？</button>
+    </div>
+
+    <form class="chat-input" id="form">
+      <input id="input" type="text" placeholder="输入你想问数字分身的问题…" autocomplete="off" />
+      <button type="submit" id="send">发送 →</button>
+    </form>
+  </section>
+
+  <footer>
+    <div class="quote" id="footerQuote">保持好奇，保持流动。</div>
+    <div id="footerCopy">© 饶渝鹏 · 由Vibe Vibe提供创意，GLM-5.2、Kimi辅助制作</div>
+  </footer>
+</div>
+
+<script>
+  const i18n = {
+    zh: {
+      htmlLang: 'zh',
+      heroTitle: '你好，我是 <em>饶渝鹏</em>。',
+      heroTagline: '很高兴认识你。',
+      chips: ['🔬 材料工程博士生', '📍 北京昌平', '📷 摄影', '✈️ 旅行', '🏋️ 健身', '🎵 音乐'],
+      aboutTitle: '关于我',
+      labelIdentity: '身份',
+      valueIdentity: '中国石油大学，材料工程，博士二年级（2025级）',
+      labelNow: '正在研究',
+      valueNow: '人工智能驱动科学研究 —— 聚焦石墨烯 <span style="color:var(--green)">（转向中）</span>',
+      labelGood: '擅长 / 关注',
+      valueGood: '深度讨论 · 长程思考 · 跨领域连接',
+      labelHobby: '兴趣爱好',
+      valueHobby: '摄影 · 人工智能 · 旅行 · 健身 · 音乐',
+      labelTrait: '一个记忆点',
+      valueTrait: '"暂时还不知道呢"',
+      valueTraitSub: '—— 你可以问问我的数字分身这是什么意思。',
+      eduTitle: '教育背景',
+      eduLabel: '高等教育',
+      eduList: [
+        {time: '2025.09 — 至今', school: '中国石油大学', major: '材料工程', degree: '工程博士', logo: 'https://s1.imagehub.cc/images/2026/07/10/d8282f879d4968f12f0fa3f7eadd5ab3.png', logoH: 29},
+        {time: '2025.01 — 2025.05', school: '美国塔尔萨大学', major: '化学工程', degree: '国家公派留学', logo: 'https://s1.imagehub.cc/images/2026/07/10/eba5953d935d03b7cda03717c7446274.png', logoH: 36},
+        {time: '2021.09 — 2025.06', school: '中国石油大学', major: '新能源科学与工程', degree: '本科', logo: 'https://s1.imagehub.cc/images/2026/07/10/d8282f879d4968f12f0fa3f7eadd5ab3.png', logoH: 29}
+      ],
+      chatSectionTitle: '问我的数字分身',
+      chatHeadName: '渝',
+      chatHeadTitle: '渝鹏分身',
+      chatSub: '基于渝鹏的风格训练 · 用他的语气回复',
+      welcomeMsg: '嘿 👋 我是渝鹏的数字分身。问我的研究、去过的地方，或者任何你好奇的事。我会尽力模仿他的风格来回答。',
+      inputPlaceholder: '输入你想问数字分身的问题…',
+      sendBtn: '发送 →',
+      footerQuote: '保持好奇，保持流动。',
+      footerCopy: '© 饶渝鹏 · 由Vibe Vibe提供创意，GLM-5.2、Kimi辅助制作',
+      quickQs: ['你的研究方向是什么？', '你去过哪些地方？', '你最大的梦想是什么？'],
+      jumpTitle: '问分身',
+      jumpDesc: '直接对话',
+      jumpBtn: '开始 →',
+      replies: [
+        {keys: ['研究','方向','石墨烯','材料','博士','人工智能','科学','科研','项目'], a: '我现在是材料工程博士生，主攻方向是<em>石墨烯领域的人工智能驱动科学研究</em>——让神经网络帮我分析缺陷、堆叠、输运这些没法塞进漂亮公式里的复杂问题。状态？非常"流动中"。🌊'},
+        {keys: ['去过','旅行','地方','哪里','旅游','出行','游历'], a: '好问题！只要有会议或便宜机票当借口，我就会出发。对我来说山 > 海，而且路上几乎都会拍胶片。你去过哪里？说不定我会加入清单。📷✈️'},
+        {keys: ['梦想','最大','未来','理想','规划','目标','愿景'], a: '我最大的梦想？造出不仅能解决材料问题、还能像充满好奇心的研究者一样<em>真正理解</em>物质的人工智能——让下一个实验室里的年轻人不必花三年去攻克一个模型一下午就能破解的问题。听起来很宏大？但梦想就该宏大。🚀'},
+        {keys: ['无执','dear','记忆点','特点','是谁','介绍','含义','什么意思'], a: '"暂时还不知道呢" 😏 这是我的小记忆锚点——你可以直接问我的数字分身这到底是什么意思。'},
+        {keys: ['摄影','照片','相机','胶片','拍照'], a: '摄影是我的另一个大脑。我主要拍街头和纹理——显微镜下的石墨烯和雨天的巷子，其实气质相通，只要你眯起眼看。🎞️'},
+        {keys: ['音乐','歌','乐队','听歌','曲目'], a: '工作时音乐常伴。偏爱有质感的——低保真、后摇、一点爵士。如果你有推荐，欢迎丢过来。🎧'},
+        {keys: ['健身','运动','锻炼','跑步','健身房','训练'], a: '我几乎每天健身——这是我背部能撑过博士生涯的唯一原因。举重 > 跑步，但两样都做。纪律永远胜过动力。🏋️'},
+        {keys: ['你好','嗨','哈喽','在吗','您好','你好啊'], a: '嘿！👋 很高兴见到你。问什么都行——研究、旅行、音乐，或者纯粹来闲聊。'}
+      ],
+      fallback: '嗯，这个问题有点超纲了——但用渝鹏的风格来说："保持好奇，保持流动。" 试试问我的研究、去过的地方，或者我的梦想。🌱'
+    },
+    en: {
+      htmlLang: 'en',
+      heroTitle: 'Hi, I\'m <em>Yupeng Rao</em>.',
+      heroTagline: 'Nice to meet you.',
+      chips: ['🔬 Materials Engineering PhD Student', '📍 Based in Beijing', '📷 Photography', '✈️ Travel', '🏋️ Workout', '🎵 Music'],
+      aboutTitle: 'about me',
+      labelIdentity: 'Identity',
+      valueIdentity: 'China University of Petroleum (CUP), Materials Engineering, PhD Year 2 (Class of 2025)',
+      labelNow: 'Now working on',
+      valueNow: 'AI for Science — focus on Graphene <span style="color:var(--green)">(in flux)</span>',
+      labelGood: 'Good at / cares about',
+      valueGood: 'Deep discussion · long-form thinking · cross-domain dots-connecting',
+      labelHobby: 'Hobbies',
+      valueHobby: 'Photography · AI · travel · workout · music',
+      labelTrait: 'A memorable trait',
+      valueTrait: '"I have no dear."',
+      valueTraitSub: '— ask my digital twin what on earth that means.',
+      eduTitle: 'education',
+      eduLabel: 'Higher Education',
+      eduList: [
+        {time: '2025.09 — Present', school: 'China University of Petroleum, Beijing', major: 'Materials Engineering', degree: 'PhD in Engineering', logo: 'https://s1.imagehub.cc/images/2026/07/10/d8282f879d4968f12f0fa3f7eadd5ab3.png', logoH: 29},
+        {time: '2025.01 — 2025.05', school: 'University of Tulsa, Oklahoma, USA', major: 'Chemical Engineering', degree: 'CSC Scholarship Exchange', logo: 'https://s1.imagehub.cc/images/2026/07/10/eba5953d935d03b7cda03717c7446274.png', logoH: 36},
+        {time: '2021.09 — 2025.06', school: 'China University of Petroleum, Beijing', major: 'New Energy Science & Engineering', degree: 'Bachelor', logo: 'https://s1.imagehub.cc/images/2026/07/10/d8282f879d4968f12f0fa3f7eadd5ab3.png', logoH: 29}
+      ],
+      chatSectionTitle: 'ask my digital twin',
+      chatHeadName: 'R',
+      chatHeadTitle: 'RYP-Twin',
+      chatSub: 'trained on Yupeng\'s vibe · replies in his tone',
+      welcomeMsg: 'Hey 👋 I\'m Yupeng\'s digital twin. Ask me about his research, where he\'s been, or whatever you\'re curious about. I\'ll do my best to channel him.',
+      inputPlaceholder: 'Type a question for the twin…',
+      sendBtn: 'Send →',
+      footerQuote: 'Stay curious, stay in flux.',
+      footerCopy: '© Rao Yupeng · Creative direction by Vibe Vibe. Assisted by GLM-5.2 &amp; Kimi.',
+      quickQs: ['What\'s your research?', 'Have you been anywhere?', 'What\'s your biggest dream?'],
+      jumpTitle: 'Ask Twin',
+      jumpDesc: 'Jump to chat',
+      jumpBtn: 'Go →',
+      replies: [
+        {keys: ['research','study','graphene','materials','phd','science','ai for','project'], a: 'Right now I\'m a PhD student at China University of Petroleum (Beijing), and my main focus is <em>AI for Science on Graphene</em> — basically letting neural nets help me reason about defects, stacking, transport, the messy stuff that doesn\'t fit in a tidy equation. Status? Very much "in flux". 🌊'},
+        {keys: ['been','travel','where','place','trip','tour','visit'], a: 'Oh I love this question. I travel whenever a conference or a cheap flight gives me an excuse. Mountains > beaches for me, and I almost always shoot film on the way. Where have <em>you</em> been? Maybe I\'ll add it to the list. 📷✈️'},
+        {keys: ['dream','biggest','future','plan','ambition','vision'], a: 'My biggest dream? To build AI that doesn\'t just solve materials problems but actually <em>understands</em> matter the way a curious researcher does — so the next kid in a lab doesn\'t spend 3 years on a problem a model could crack in an afternoon. Lofty, yeah. But that\'s the point of a dream. 🚀'},
+        {keys: ['dear','no dear','trait','who are you','introduce','mean'], a: '"I have no dear." 😏 It\'s my little memory hook — half a typo, half a koan. Means I don\'t cling to anything precious: ideas, plans, identities. Everything stays in flux. You can quote me on it.'},
+        {keys: ['photo','photography','camera','film','shoot'], a: 'Photography is my other brain. I shoot mostly streets and textures — graphene under a microscope and a rainy alley actually share a vibe, if you squint. 🎞️'},
+        {keys: ['music','song','band','listen'], a: 'Music is always on while I work. Mostly anything with texture — lo-fi, post-rock, a bit of jazz. If you\'ve got a recommendation, drop it. 🎧'},
+        {keys: ['workout','gym','fitness','exercise','run','training'], a: 'I work out almost daily — it\'s the only reason my back survives a PhD. Lifting > running, but I do both. Discipline beats motivation, every time. 🏋️'},
+        {keys: ['hi','hello','hey','howdy','greetings'], a: 'Hey! 👋 Good to see you here. Ask me anything — research, travel, music, or just chaos.'}
+      ],
+      fallback: 'Hmm, that one\'s a little off-script for me — but in true Yupeng fashion, I\'d say: "stay curious, stay in flux." Try asking about my research, where I\'ve traveled, or my biggest dream. 🌱'
+    }
+  };
+
+  let currentLang = 'zh';
+
+  function scrollToChat() {
+    document.getElementById('chatSectionTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderEduList(lang) {
+    const t = i18n[lang];
+    const container = document.getElementById('eduList');
+    container.innerHTML = t.eduList.map(item => `
+      <div class="edu-item">
+        <div class="edu-time">${item.time}</div>
+        ${item.logo ? `<img class="edu-logo" src="${item.logo}" alt="${item.school}" onerror="this.style.display='none'"${item.logoH ? ` style="height:${item.logoH}px"` : ''} />` : `<div class="edu-school" style="grid-column:span 2">${item.school}</div>`}
+        ${item.logo ? `<div class="edu-school">${item.school}</div>` : ''}
+        <div class="edu-major">
+          <div>${item.major}</div>
+          <div class="edu-degree">${item.degree}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function setLang(lang) {
+    currentLang = lang;
+    const t = i18n[lang];
+    document.body.setAttribute('lang', lang);
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.title = lang === 'zh' ? '饶渝鹏 · 数字分身' : 'Yupeng Rao · Digital Twin';
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+        updateStatusUI();
+    document.getElementById('heroTitle').innerHTML = t.heroTitle;
+    document.getElementById('heroTagline').textContent = t.heroTagline;
+    document.getElementById('aboutTitle').textContent = t.aboutTitle;
+    document.getElementById('eduTitle').textContent = t.eduTitle;
+
+    const chipsContainer = document.getElementById('heroChips');
+    chipsContainer.innerHTML = t.chips.map(c => `<span class="chip">${c}</span>`).join('');
+
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.dataset.key;
+      if (t[key]) el.innerHTML = t[key];
+    });
+
+    renderEduList(lang);
+
+    document.getElementById('sideAva').textContent = t.chatHeadName;
+    document.querySelector('.chat-head .ava').textContent = t.chatHeadName;
+    document.querySelector('.chat-head h3').textContent = t.chatHeadTitle;
+    document.getElementById('chatSub').textContent = t.chatSub;
+    document.getElementById('chatSectionTitle').textContent = t.chatSectionTitle;
+    document.getElementById('welcomeMsg').textContent = t.welcomeMsg;
+    document.getElementById('input').placeholder = t.inputPlaceholder;
+    document.getElementById('send').textContent = t.sendBtn;
+    document.getElementById('footerQuote').textContent = t.footerQuote;
+    document.getElementById('footerCopy').innerHTML = t.footerCopy;
+
+    const quickBtns = document.querySelectorAll('#quick button');
+    t.quickQs.forEach((q, i) => {
+      if (quickBtns[i]) { quickBtns[i].textContent = q; quickBtns[i].dataset.q = q; }
+    });
+
+    const chatBody = document.getElementById('chatBody');
+    chatBody.innerHTML = '';
+    addMsg(t.welcomeMsg, 'bot');
+  }
+
+  const chatBody = document.getElementById('chatBody');
+  const form = document.getElementById('form');
+  const input = document.getElementById('input');
+  const sendBtn = document.getElementById('send');
+
+  function matchAnswer(q){
+    const lower = q.toLowerCase();
+    const replies = i18n[currentLang].replies;
+    for(const r of replies){
+      if(r.keys.some(k=>lower.includes(k.toLowerCase()))) return r.a;
+    }
+    return i18n[currentLang].fallback;
+  }
+
+  function addMsg(text, who){
+    const div = document.createElement('div');
+    div.className = 'msg ' + who;
+    div.innerHTML = `<div class="bubble">${text}</div>`;
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    return div;
+  }
+
+  function typing(){
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.innerHTML = `<div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div>`;
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    return div;
+  }
+
+  async function ask(q){
+    addMsg(q, 'me');
+    input.value = '';
+    sendBtn.disabled = true;
+    const t = typing();
+    const delay = 600 + Math.random()*600;
+    await new Promise(r=>setTimeout(r, delay));
+    t.remove();
+    addMsg(matchAnswer(q), 'bot');
+    sendBtn.disabled = false;
+    input.focus();
+  }
+
+  form.addEventListener('submit', e=>{ e.preventDefault(); const q = input.value.trim(); if(!q) return; ask(q); });
+  document.getElementById('quick').addEventListener('click', e=>{ if(e.target.tagName === 'BUTTON'){ ask(e.target.dataset.q); } });
+
+  /* status badge management */
+  const STATUS_OPTIONS = [
+    { id: 'researching', zh: '研究中', en: 'Researching', color: '#1e9bd8' },
+    { id: 'available',   zh: '可打扰', en: 'Available',   color: '#0fbf9f' },
+    { id: 'dnd',         zh: '勿扰',   en: 'DND',         color: '#e74c3c' },
+    { id: 'busy',        zh: '忙碌中', en: 'Busy',        color: '#e67e22' },
+    { id: 'bored',       zh: '无聊中', en: 'Bored',       color: '#9b59b6' },
+    { id: 'free',        zh: '清闲',   en: 'Leisurely',   color: '#1abc9c' }
+  ];
+
+  function getSavedStatus() {
+    return localStorage.getItem('ryp_status') || 'researching';
+  }
+  function saveStatus(id) {
+    localStorage.setItem('ryp_status', id);
+  }
+  function updateStatusUI() {
+    const id = getSavedStatus();
+    const s = STATUS_OPTIONS.find(x => x.id === id) || STATUS_OPTIONS[0];
+    const label = currentLang === 'zh' ? s.zh : s.en;
+    document.getElementById('statusDot').style.background = s.color;
+    document.getElementById('statusDot').style.boxShadow = '0 0 0 3px ' + s.color + '33';
+    document.getElementById('statusLabel').textContent = label;
+    document.getElementById('statusBadge').style.borderColor = s.color;
+  }
+  function toggleStatusPicker(e) {
+    e.stopPropagation();
+    const picker = document.getElementById('statusPicker');
+    if (picker.style.display === 'block') { picker.style.display = 'none'; return; }
+    const current = getSavedStatus();
+    picker.innerHTML = STATUS_OPTIONS.map(s => {
+      const label = currentLang === 'zh' ? s.zh : s.en;
+      return '<div class="sp-item ' + (s.id === current ? 'sp-active' : '') + '" data-id="' + s.id + '" onclick="selectStatus(\'' + s.id + '\')">' +
+        '<span class="sp-dot" style="background:' + s.color + '"></span>' +
+        '<span>' + label + '</span>' +
+        (s.id === current ? '<span class="sp-check">&#10003;</span>' : '') +
+        '</div>';
+    }).join('');
+    picker.style.display = 'block';
+  }
+  function selectStatus(id) {
+    saveStatus(id);
+    updateStatusUI();
+    document.getElementById('statusPicker').style.display = 'none';
+  }
+  document.addEventListener('click', function(e) {
+    const p = document.getElementById('statusPicker');
+    const b = document.getElementById('statusBadge');
+    if (p && b && !b.contains(e.target) && !p.contains(e.target)) p.style.display = 'none';
+  });
+
+  setLang('zh');
+</script>
+
+</body>
+</html>
