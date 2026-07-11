@@ -156,7 +156,7 @@
   .info-card.full{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
 
  /* research expand card */
-  .info-card.research-card,.info-card.identity-card,.info-card.hobby-card{transition:all .35s ease}
+  .info-card.research-card,.info-card.identity-card,.info-card.hobby-card{transition:border-color .35s ease,transform .35s ease}
   .info-card.research-card.expanded,.info-card.identity-card.expanded,.info-card.hobby-card.expanded{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
  .research-expand{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);animation:fadeIn .3s ease}
   .info-card.research-card.expanded .research-expand,.info-card.identity-card.expanded .research-expand,.info-card.hobby-card.expanded .research-expand{display:block}
@@ -373,7 +373,7 @@
   .travel-modal-start .travel-modal-close,
   .travel-modal-start .travel-modal-nav{opacity:1!important;pointer-events:auto!important}
 
-  .travel-modal-close:hover{background:rgba(0,0,0,.7);transform:scale(1.1)}
+  
   .travel-modal-hero{
     position:relative;
     width:100%;
@@ -498,7 +498,11 @@
     .location-card.floated{transform:none!important}
     .location-card::before{background:linear-gradient(to top,rgba(0,0,0,.5) 0%,rgba(0,0,0,.1) 50%,transparent 100%)}
     .location-card:hover{transform:none!important;box-shadow:0 2px 10px -4px rgba(0,0,0,.1)}
-  }
+  
+    /* travel modal: always show buttons on mobile */
+    .travel-modal-close{opacity:1!important;pointer-events:auto!important}
+    .travel-modal-nav{opacity:1!important;pointer-events:auto!important}
+}
 </style>
 <base target="_blank">
 </head>
@@ -915,8 +919,10 @@
 
     document.body.appendChild(overlay);
     // show controls briefly for first-time awareness
-    overlay.classList.add('travel-modal-start');
-    setTimeout(() => overlay.classList.remove('travel-modal-start'), 2500);
+    if (window.innerWidth > 899) {
+      overlay.classList.add('travel-modal-start');
+      setTimeout(() => overlay.classList.remove('travel-modal-start'), 2500);
+    }
     // prevent body scroll while modal is open
     document.body.style.overflow = 'hidden';
     // restore scroll on close
