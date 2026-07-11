@@ -160,6 +160,7 @@
   .info-card.research-card.expanded,.info-card.identity-card.expanded,.info-card.hobby-card.expanded{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
  .research-expand{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);animation:fadeIn .3s ease}
   .info-card.research-card.expanded .research-expand,.info-card.identity-card.expanded .research-expand,.info-card.hobby-card.expanded .research-expand{display:block}
+  .info-card.hobby-card.expanded{overflow:visible}
   .research-expand .pub-title{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
   .research-topic{margin-bottom:18px}
   .research-topic .rt-label{font-size:12px;color:var(--green);font-weight:600;margin-bottom:4px}
@@ -184,36 +185,131 @@
   .edu-degree{font-size:12px;color:var(--green);font-weight:600;margin-top:2px}
  .edu-logo{height:24px;width:auto;border-radius:4px;display:block;max-width:100%;margin:0 auto;object-fit:contain}
 
-  /* travel destination cards */
-  .travel-country{margin-bottom:18px}
+    /* ── travel destination cards — stacked fan layout ── */
+  .travel-country{margin-bottom:28px}
   .travel-country:last-child{margin-bottom:0}
-  .tc-label{font-size:12px;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
-  .location-grid{display:flex;flex-wrap:wrap;gap:8px}
+  .tc-label{font-size:11px;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:1.8px;margin-bottom:14px}
+
+  .location-grid{
+    position:relative;
+    height:165px;
+    padding-top:8px;
+  }
+
   .location-card{
-    width:46px;height:128px;
-    background:var(--card);border:1px solid var(--line);border-radius:14px;
-    cursor:pointer;transition:all .35s cubic-bezier(.4,0,.2,1);
-    display:flex;align-items:center;justify-content:center;
-    overflow:hidden;position:relative;z-index:1;
+    position:absolute;
+    top:8px;
+    width:240px;
+    height:135px;
+    border-radius:12px;
+    overflow:hidden;
+    cursor:pointer;
+    display:flex;
+    align-items:flex-end;
+    background:var(--card);
+    border:1px solid var(--line);
+    box-shadow:0 2px 10px -4px rgba(0,0,0,.1);
+    transition:transform .35s cubic-bezier(.4,0,.2,1),
+               box-shadow .35s cubic-bezier(.4,0,.2,1);
   }
-  .location-card:hover{
-    width:172px;height:auto;min-height:72px;
-    box-shadow:0 14px 36px -14px rgba(11,111,184,.32);
-    border-color:transparent;transform:translateY(-3px);
-    z-index:5;
+
+  .location-card::before{
+    content:'';
+    position:absolute;inset:0;
+    background:linear-gradient(160deg,rgba(216,245,238,.35) 0%,rgba(227,244,251,.25) 50%,#fff 100%);
+    pointer-events:none;
   }
+
   .lc-inner{
-    writing-mode:vertical-rl;text-orientation:mixed;
-    display:flex;align-items:center;gap:0;
-    transition:all .35s cubic-bezier(.4,0,.2,1);
+    position:relative;z-index:1;
+    width:100%;height:100%;
   }
+
+  /* default: vertical name at bottom-right */
+  .lc-name{
+    font-size:15px;font-weight:600;color:var(--ink);
+    line-height:1.4;letter-spacing:.5px;
+    white-space:nowrap;
+    position:absolute;
+    bottom:14px;right:14px;
+    writing-mode:vertical-rl;
+    text-orientation:mixed;
+  }
+
+  .lc-date{
+    font-size:11px;color:var(--ink-soft);opacity:.85;
+    white-space:nowrap;
+    display:none;
+  }
+
+  /* ── hover: horizontal layout, show date ── */
+  .location-card:hover{
+    z-index:100!important;
+    transform:translateY(-6px)!important;
+    box-shadow:0 16px 40px -12px rgba(11,111,184,.3);
+    border-color:transparent;
+  }
+
   .location-card:hover .lc-inner{
-    writing-mode:horizontal-tb;flex-direction:column;gap:3px;
+    display:flex;flex-direction:column;
+    justify-content:flex-end;align-items:flex-start;
+    padding:12px 14px;gap:2px;
   }
-  .lc-name{font-size:14px;font-weight:600;color:var(--ink);line-height:1.3;letter-spacing:1px}
-  .location-card:hover .lc-name{font-size:15px;letter-spacing:0}
-  .lc-date{font-size:11px;color:var(--ink-soft);display:none;white-space:nowrap}
-  .location-card:hover .lc-date{display:block}
+
+  .location-card:hover .lc-name{
+    position:static;
+    writing-mode:horizontal-tb;
+  }
+
+  .location-card:hover .lc-date{
+    display:block;
+  }
+
+  /* ── first card: always show preview (horizontal + date) ── */
+  .location-card:nth-child(1) .lc-inner{
+    display:flex;flex-direction:column;
+    justify-content:flex-end;align-items:flex-start;
+    padding:12px 14px;gap:2px;
+  }
+
+  .location-card:nth-child(1) .lc-name{
+    position:static;
+    writing-mode:horizontal-tb;
+  }
+
+  .location-card:nth-child(1) .lc-date{
+    display:block;
+  }
+
+  /* ── default stacking: same baseline, newest first ── */
+  .location-card:nth-child(1){left:0;z-index:20}
+  .location-card:nth-child(2){left:81px;z-index:19}
+  .location-card:nth-child(3){left:162px;z-index:18}
+  .location-card:nth-child(4){left:243px;z-index:17}
+  .location-card:nth-child(5){left:324px;z-index:16}
+  .location-card:nth-child(6){left:405px;z-index:15}
+  .location-card:nth-child(7){left:486px;z-index:14}
+  .location-card:nth-child(8){left:567px;z-index:13}
+  .location-card:nth-child(9){left:648px;z-index:12}
+  .location-card:nth-child(10){left:729px;z-index:11}
+
+  /* responsive */
+  @media(max-width:600px){
+    .location-card{width:180px;height:101px}
+    .lc-name{font-size:13px}
+    .lc-date{font-size:10px}
+    .location-card:nth-child(1){left:0}
+    .location-card:nth-child(2){left:61px}
+    .location-card:nth-child(3){left:122px}
+    .location-card:nth-child(4){left:183px}
+    .location-card:nth-child(5){left:244px}
+    .location-card:nth-child(6){left:305px}
+    .location-card:nth-child(7){left:366px}
+    .location-card:nth-child(8){left:427px}
+    .location-card:nth-child(9){left:488px}
+    .location-card:nth-child(10){left:549px}
+    .location-grid{height:130px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  }
 
   /* chat */
   .chat-wrap{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
@@ -599,6 +695,18 @@
     container.innerHTML =
       '<div class="travel-country"><div class="tc-label">' + t.travelChina + '</div><div class="location-grid">' + renderCards(t.travelData.china) + '</div></div>' +
       '<div class="travel-country"><div class="tc-label">' + t.travelUSA + '</div><div class="location-grid">' + renderCards(t.travelData.usa) + '</div></div>';
+    // set min-width on each grid so stacked cards are fully scrollable
+    requestAnimationFrame(() => {
+      container.querySelectorAll('.location-grid').forEach(grid => {
+        const cards = grid.querySelectorAll('.location-card');
+        if (cards.length > 0) {
+          const last = cards[cards.length - 1];
+          const cardW = last.offsetWidth || 240;
+          const totalW = last.offsetLeft + cardW + 8;
+          grid.style.minWidth = totalW + 'px';
+        }
+      });
+    });
   }
   function toggleHobby() {
     const card = document.getElementById('hobbyCard');
