@@ -327,23 +327,7 @@
   }
 
   /* responsive */
-  @media(max-width:600px){
-    .location-card{width:180px;height:101px}
-    .lc-name{font-size:13px}
-    .lc-date{font-size:10px}
-    .location-card:nth-child(1){left:0}
-    .location-card:nth-child(2){left:61px}
-    .location-card:nth-child(3){left:122px}
-    .location-card:nth-child(4){left:183px}
-    .location-card:nth-child(5){left:244px}
-    .location-card:nth-child(6){left:305px}
-    .location-card:nth-child(7){left:366px}
-    .location-card:nth-child(8){left:427px}
-    .location-card:nth-child(9){left:488px}
-    .location-card:nth-child(10){left:549px}
-    .location-grid{height:130px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  }
-
+  
   /* chat */
   .chat-wrap{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
   .chat-head{padding:20px 24px;background:linear-gradient(120deg,var(--blue-deep),var(--blue) 55%,var(--green));color:#fff;display:flex;align-items:center;gap:14px}
@@ -390,10 +374,10 @@
     .info-card.full{grid-column:auto}
    .info-card.research-card.expanded,.info-card.identity-card.expanded{grid-column:auto}
     .info-card.hobby-card.expanded{grid-column:auto}
-    .edu-item{display:flex;flex-direction:column;gap:6px;padding:14px 0;text-align:center}
-    .edu-time{font-size:12px}
-    .edu-school{font-size:14px;font-weight:500}
-    .edu-major{font-size:13px}
+    .edu-item{display:flex;flex-direction:column;gap:6px;padding:14px 0;align-items:center;text-align:center}
+    .edu-time{font-size:12px;text-align:center}
+    .edu-school{font-size:14px;font-weight:500;text-align:center}
+    .edu-major{font-size:13px;text-align:center}
     .edu-logo{margin:0 auto 4px}
     .pub-item{flex-direction:column;gap:4px}
     .chat-body{height:340px}
@@ -402,6 +386,14 @@
     .topbar{flex-wrap:wrap;gap:12px}
     .lang-switch{order:-1;width:100%;justify-content:center}
     .side-widget{display:none}
+    .location-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:10px;height:auto;overflow:visible;padding-top:0}
+    .location-card{position:relative;top:0;left:0!important;width:100%;height:auto;aspect-ratio:16/9;min-height:90px;transform:none!important}
+    .location-card .lc-inner{display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;padding:10px 12px;gap:2px}
+    .location-card .lc-name{position:static;writing-mode:horizontal-tb;font-size:13px}
+    .location-card .lc-date{display:block;font-size:10px}
+    .location-card.floated{transform:none!important}
+    .location-card::before{background:linear-gradient(to top,rgba(0,0,0,.5) 0%,rgba(0,0,0,.1) 50%,transparent 100%)}
+    .location-card:hover{transform:none!important;box-shadow:0 2px 10px -4px rgba(0,0,0,.1)}
   }
 </style>
 <base target="_blank">
@@ -730,18 +722,20 @@
     container.innerHTML =
       '<div class="travel-country"><div class="tc-label">' + t.travelChina + '</div><div class="location-grid">' + renderCards(t.travelData.china) + '</div></div>' +
       '<div class="travel-country"><div class="tc-label">' + t.travelUSA + '</div><div class="location-grid">' + renderCards(t.travelData.usa) + '</div></div>';
-    // set min-width on each grid so stacked cards are fully scrollable
-    requestAnimationFrame(() => {
-      container.querySelectorAll('.location-grid').forEach(grid => {
-        const cards = grid.querySelectorAll('.location-card');
-        if (cards.length > 0) {
-          const last = cards[cards.length - 1];
-          const cardW = last.offsetWidth || 240;
-          const totalW = last.offsetLeft + cardW + 8;
-          grid.style.minWidth = totalW + 'px';
-        }
+    // set min-width on desktop; on mobile the CSS grid handles wrapping
+    if (window.innerWidth > 899) {
+      requestAnimationFrame(() => {
+        container.querySelectorAll('.location-grid').forEach(grid => {
+          const cards = grid.querySelectorAll('.location-card');
+          if (cards.length > 0) {
+            const last = cards[cards.length - 1];
+            const cardW = last.offsetWidth || 240;
+            const totalW = last.offsetLeft + cardW + 8;
+            grid.style.minWidth = totalW + 'px';
+          }
+        });
       });
-    });
+    }
 
     // float previous cards on hover
     container.querySelectorAll('.location-grid').forEach(grid => {
