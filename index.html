@@ -363,9 +363,16 @@
     font-size:18px;
     cursor:pointer;
     display:grid;place-items:center;
-    transition:.2s;
+    transition:opacity .25s ease,transform .2s,background .2s;
     line-height:1;
+    opacity:0;
+    pointer-events:none;
   }
+  .travel-modal:has(.travel-modal-hero:hover) .travel-modal-close{opacity:1;pointer-events:auto}
+  .travel-modal-close:hover{opacity:1!important;pointer-events:auto!important;background:rgba(0,0,0,.7);transform:scale(1.1)}
+  .travel-modal-start .travel-modal-close,
+  .travel-modal-start .travel-modal-nav{opacity:1!important;pointer-events:auto!important}
+
   .travel-modal-close:hover{background:rgba(0,0,0,.7);transform:scale(1.1)}
   .travel-modal-hero{
     position:relative;
@@ -415,6 +422,14 @@
     pointer-events:none;
   }
   .travel-modal-empty{text-align:center;padding:24px;color:var(--ink-soft);font-size:13px;font-style:italic}
+  .travel-modal-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:0;opacity:0;transition:opacity .25s ease;pointer-events:none}
+  .travel-modal-body:hover .travel-modal-nav,.travel-modal-nav:hover{opacity:1;pointer-events:auto}
+  .tmn-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.2s;line-height:1}
+  .tmn-btn:hover{background:var(--sky);border-color:var(--green);color:var(--green)}
+  .tmn-btn:disabled{opacity:.25;cursor:default;background:var(--card);border-color:var(--line);color:var(--ink-soft)}
+  .tmn-btn:disabled:hover{background:var(--card);border-color:var(--line);color:var(--ink-soft)}
+  .tmn-counter{font-size:12px;color:var(--ink-soft);font-family:'Space Grotesk';font-weight:500;letter-spacing:.5px}
+
   @keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 
   /* chat */
@@ -851,14 +866,15 @@
         const idx = parseInt(card.dataset.index);
         const loc = t.travelData[key][idx];
         if (!loc || !loc.desc) return;
-        openTravelModal(loc, lang);
+        openTravelModal(loc, lang, key, idx);
       });
     });
   }
 
-  function openTravelModal(loc, lang) {
+  function openTravelModal(loc, lang, key, idx) {
     const existing = document.querySelector('.travel-modal-overlay');
     if (existing) existing.remove();
+    window._modalNavState = { key, idx, lang };
 
     const overlay = document.createElement('div');
     overlay.className = 'travel-modal-overlay active';
@@ -884,6 +900,11 @@
           <div class="travel-modal-desc">${loc.desc}</div>
           <div class="travel-modal-photos-title">${lang === 'zh' ? '📸 更多照片' : '📸 More Photos'}</div>
           <div class="travel-modal-photos">${photosHtml}</div>
+          <div class="travel-modal-nav">
+            <button class="tmn-btn" onclick="navigateModal(-1)" ${idx <= 0 ? 'disabled' : ''} aria-label="Previous">&#8592;</button>
+            <span class="tmn-counter">${idx + 1} / ${i18n[lang].travelData[key].length}</span>
+            <button class="tmn-btn" onclick="navigateModal(1)" ${idx >= i18n[lang].travelData[key].length - 1 ? 'disabled' : ''} aria-label="Next">&#8594;</button>
+          </div>
         </div>
       </div>`;
 
@@ -893,6 +914,9 @@
     });
 
     document.body.appendChild(overlay);
+    // show controls briefly for first-time awareness
+    overlay.classList.add('travel-modal-start');
+    setTimeout(() => overlay.classList.remove('travel-modal-start'), 2500);
     // prevent body scroll while modal is open
     document.body.style.overflow = 'hidden';
     // restore scroll on close
@@ -904,6 +928,16 @@
     });
     observer.observe(document.body, { childList: true, subtree: false });
   }
+  function navigateModal(dir) {
+    const state = window._modalNavState;
+    if (!state) return;
+    const t = i18n[state.lang];
+    const locs = t.travelData[state.key];
+    const newIdx = state.idx + dir;
+    if (newIdx < 0 || newIdx >= locs.length) return;
+    openTravelModal(locs[newIdx], state.lang, state.key, newIdx);
+  }
+  
   function toggleHobby() {
     const card = document.getElementById('hobbyCard');
     if (!card) return;
