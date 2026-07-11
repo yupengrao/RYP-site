@@ -155,11 +155,11 @@
   .info-card .ic{position:absolute;right:18px;top:18px;font-family:'Space Grotesk';font-weight:700;color:var(--mint);font-size:34px;line-height:1}
   .info-card.full{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
 
-  /* research expand card */
-  .info-card.research-card,.info-card.identity-card{transition:all .35s ease}
-  .info-card.research-card.expanded,.info-card.identity-card.expanded{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
-  .research-expand{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);animation:fadeIn .3s ease}
-  .info-card.research-card.expanded .research-expand,.info-card.identity-card.expanded .research-expand{display:block}
+ /* research expand card */
+  .info-card.research-card,.info-card.identity-card,.info-card.hobby-card{transition:all .35s ease}
+  .info-card.research-card.expanded,.info-card.identity-card.expanded,.info-card.hobby-card.expanded{grid-column:span 2;background:linear-gradient(120deg,var(--sky),#fff 60%);border-color:transparent}
+ .research-expand{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);animation:fadeIn .3s ease}
+  .info-card.research-card.expanded .research-expand,.info-card.identity-card.expanded .research-expand,.info-card.hobby-card.expanded .research-expand{display:block}
   .research-expand .pub-title{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
   .research-topic{margin-bottom:18px}
   .research-topic .rt-label{font-size:12px;color:var(--green);font-weight:600;margin-bottom:4px}
@@ -170,10 +170,10 @@
   .pub-body{font-size:13px;color:var(--ink);line-height:1.55}
   .pub-body .pub-journal{font-weight:600;color:var(--blue-deep)}
   .pub-body .pub-meta{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
-  .expand-hint{font-size:11px;color:var(--green);font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px;transition:.2s}
-  .info-card.research-card.expanded .expand-hint,.info-card.identity-card.expanded .expand-hint{color:var(--ink-soft)}
-  .expand-hint .eh-arrow{display:inline-block;transition:.25s;font-size:10px}
-  .info-card.research-card.expanded .expand-hint .eh-arrow,.info-card.identity-card.expanded .expand-hint .eh-arrow{transform:rotate(180deg)}
+ .expand-hint{font-size:11px;color:var(--green);font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px;transition:.2s}
+  .info-card.research-card.expanded .expand-hint,.info-card.identity-card.expanded .expand-hint,.info-card.hobby-card.expanded .expand-hint{color:var(--ink-soft)}
+ .expand-hint .eh-arrow{display:inline-block;transition:.25s;font-size:10px}
+  .info-card.research-card.expanded .expand-hint .eh-arrow,.info-card.identity-card.expanded .expand-hint .eh-arrow,.info-card.hobby-card.expanded .expand-hint .eh-arrow{transform:rotate(180deg)}
 
   /* edu list (inside identity expand) */
   .edu-item{display:grid;grid-template-columns:  140px auto 1fr 150px;gap:25px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
@@ -182,7 +182,38 @@
   .edu-school{font-size:15px;font-weight:500;color:var(--ink);text-align:left;line-height:1.5}
   .edu-major{font-size:13px;color:var(--ink-soft);text-align:left;line-height:1.5}
   .edu-degree{font-size:12px;color:var(--green);font-weight:600;margin-top:2px}
-  .edu-logo{height:24px;width:auto;border-radius:4px;display:block;max-width:100%;margin:0 auto;object-fit:contain}
+ .edu-logo{height:24px;width:auto;border-radius:4px;display:block;max-width:100%;margin:0 auto;object-fit:contain}
+
+  /* travel destination cards */
+  .travel-country{margin-bottom:18px}
+  .travel-country:last-child{margin-bottom:0}
+  .tc-label{font-size:12px;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+  .location-grid{display:flex;flex-wrap:wrap;gap:8px}
+  .location-card{
+    width:46px;height:128px;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    cursor:pointer;transition:all .35s cubic-bezier(.4,0,.2,1);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;position:relative;z-index:1;
+  }
+  .location-card:hover{
+    width:172px;height:auto;min-height:72px;
+    box-shadow:0 14px 36px -14px rgba(11,111,184,.32);
+    border-color:transparent;transform:translateY(-3px);
+    z-index:5;
+  }
+  .lc-inner{
+    writing-mode:vertical-rl;text-orientation:mixed;
+    display:flex;align-items:center;gap:0;
+    transition:all .35s cubic-bezier(.4,0,.2,1);
+  }
+  .location-card:hover .lc-inner{
+    writing-mode:horizontal-tb;flex-direction:column;gap:3px;
+  }
+  .lc-name{font-size:14px;font-weight:600;color:var(--ink);line-height:1.3;letter-spacing:1px}
+  .location-card:hover .lc-name{font-size:15px;letter-spacing:0}
+  .lc-date{font-size:11px;color:var(--ink-soft);display:none;white-space:nowrap}
+  .location-card:hover .lc-date{display:block}
 
   /* chat */
   .chat-wrap{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
@@ -228,7 +259,8 @@
     .chips{justify-content:center}
     .info-grid{grid-template-columns:1fr}
     .info-card.full{grid-column:auto}
-    .info-card.research-card.expanded,.info-card.identity-card.expanded{grid-column:auto}
+   .info-card.research-card.expanded,.info-card.identity-card.expanded{grid-column:auto}
+    .info-card.hobby-card.expanded{grid-column:auto}
     .edu-item{display:flex;flex-direction:column;gap:6px;padding:14px 0;text-align:center}
     .edu-time{font-size:12px}
     .edu-school{font-size:14px;font-weight:500}
@@ -321,11 +353,16 @@
       <div class="label" data-key="labelGood">擅长 / 关注</div>
       <div class="value" data-key="valueGood">深度讨论 · 长程思考 · 跨领域连接</div>
     </div>
-    <div class="info-card">
-      <div class="ic">04</div>
-      <div class="label" data-key="labelHobby">兴趣爱好</div>
-      <div class="value" data-key="valueHobby">摄影 · 人工智能 · 旅行 · 健身 · 音乐</div>
-    </div>
+    <div class="info-card clickable hobby-card" id="hobbyCard" onclick="toggleHobby()">
+     <div class="ic">04</div>
+     <div class="label" data-key="labelHobby">兴趣爱好</div>
+     <div class="value" data-key="valueHobby">摄影 · 人工智能 · 旅行 · 健身 · 音乐</div>
+      <div class="expand-hint"><span data-key="hobbyExpandHint">点击展开摄影与旅行</span> <span class="eh-arrow">▾</span></div>
+      <div class="research-expand" id="hobbyExpand">
+        <div class="pub-title" data-key="photoTravelTitle">摄影与旅行</div>
+        <div id="travelContent"></div>
+      </div>
+   </div>
     <div class="info-card full">
       <div class="ic" style="color:var(--sky)">★</div>
       <div class="label" data-key="labelTrait">一个记忆点</div>
@@ -385,8 +422,31 @@
       valueNow: '人工智能驱动科学研究 —— 聚焦石墨烯 <span style="color:var(--green)">（转向中）</span>',
       labelGood: '擅长 / 关注',
       valueGood: '深度讨论 · 长程思考 · 跨领域连接',
-      labelHobby: '兴趣爱好',
-      valueHobby: '摄影 · 人工智能 · 旅行 · 健身 · 音乐',
+     labelHobby: '兴趣爱好',
+
+      hobbyExpandHint: '点击展开摄影与旅行',
+      photoTravelTitle: '摄影与旅行',
+      travelChina: '中国 🇨🇳',
+      travelUSA: '美国 🇺🇸',
+      travelData: {
+        china: [
+          { name: '重庆', date: '2026.05' },
+          { name: '阿坝州', date: '2025.08' },
+          { name: '北京', date: '2025.06' }
+        ],
+        usa: [
+          { name: '塔尔萨', date: '2025' },
+          { name: '洛杉矶', date: '2025.05' },
+          { name: '得克萨斯州', date: '2025.03.15' },
+          { name: '犹他州', date: '2025.03.16' },
+          { name: '亚利桑那州', date: '2025.03.16' },
+          { name: '拉斯维加斯', date: '2025.03.17-18' },
+          { name: '加利福尼亚州', date: '2025.03.19-24' },
+          { name: '内华达州', date: '2025.03.25' },
+          { name: '怀俄明州', date: '2025.03.27' }
+        ]
+      },
+     valueHobby: '摄影 · 人工智能 · 旅行 · 健身 · 音乐',
       labelTrait: '一个记忆点',
       valueTrait: '"暂时还不知道呢"',
       valueTraitSub: '—— 你可以问问我的数字分身这是什么意思。',
@@ -444,8 +504,31 @@
       valueNow: 'AI for Science — focus on Graphene <span style="color:var(--green)">(in flux)</span>',
       labelGood: 'Good at / cares about',
       valueGood: 'Deep discussion · long-form thinking · cross-domain dots-connecting',
-      labelHobby: 'Hobbies',
-      valueHobby: 'Photography · AI · travel · workout · music',
+     labelHobby: 'Hobbies',
+
+      hobbyExpandHint: 'Click to expand Photography & Travel',
+      photoTravelTitle: 'Photography & Travel',
+      travelChina: 'China 🇨🇳',
+      travelUSA: 'USA 🇺🇸',
+      travelData: {
+        china: [
+          { name: 'Chongqing', date: '2026.05' },
+          { name: 'Aba Prefecture', date: '2025.08' },
+          { name: 'Beijing', date: '2025.06' }
+        ],
+        usa: [
+          { name: 'Tulsa', date: '2025' },
+          { name: 'Los Angeles', date: '2025.05' },
+          { name: 'Texas', date: '2025.03.15' },
+          { name: 'Utah', date: '2025.03.16' },
+          { name: 'Arizona', date: '2025.03.16' },
+          { name: 'Las Vegas', date: '2025.03.17-18' },
+          { name: 'California', date: '2025.03.19-24' },
+          { name: 'Nevada', date: '2025.03.25' },
+          { name: 'Wyoming', date: '2025.03.27' }
+        ]
+      },
+     valueHobby: 'Photography · AI · travel · workout · music',
       labelTrait: 'A memorable trait',
       valueTrait: '"I have no dear."',
       valueTraitSub: '— ask my digital twin what on earth that means.',
@@ -499,8 +582,35 @@
     document.getElementById('chatSectionTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  let researchExpanded = false;
-  function renderPubList(lang) {
+ let researchExpanded = false;
+
+  let hobbyExpanded = false;
+  function renderTravelContent(lang) {
+    const t = i18n[lang];
+    const container = document.getElementById('travelContent');
+    if (!container) return;
+    const renderCards = (locs) => locs.map(l => `
+      <div class="location-card">
+        <div class="lc-inner">
+          <span class="lc-name">${l.name}</span>
+          <span class="lc-date">${l.date}</span>
+        </div>
+      </div>`).join('');
+    container.innerHTML =
+      '<div class="travel-country"><div class="tc-label">' + t.travelChina + '</div><div class="location-grid">' + renderCards(t.travelData.china) + '</div></div>' +
+      '<div class="travel-country"><div class="tc-label">' + t.travelUSA + '</div><div class="location-grid">' + renderCards(t.travelData.usa) + '</div></div>';
+  }
+  function toggleHobby() {
+    const card = document.getElementById('hobbyCard');
+    if (!card) return;
+    hobbyExpanded = !hobbyExpanded;
+    if (hobbyExpanded) { card.classList.add('expanded'); renderTravelContent(currentLang); }
+    else { card.classList.remove('expanded'); }
+    const hint = document.querySelector('#hobbyCard [data-key="hobbyExpandHint"]');
+    if (hint) hint.innerHTML = hobbyExpanded ? (currentLang === 'zh' ? '收起' : 'Collapse') + ' <span class="eh-arrow">▾</span>' : i18n[currentLang].hobbyExpandHint + ' <span class="eh-arrow">▾</span>';
+  }
+
+ function renderPubList(lang) {
     const t = i18n[lang];
     const container = document.getElementById('pubList');
     if (!container) return;
@@ -590,8 +700,9 @@
       if (t[key]) el.innerHTML = t[key];
     });
 
-    if (identityExpanded) renderEduList(lang);
-    if (researchExpanded) renderPubList(lang);
+   if (identityExpanded) renderEduList(lang);
+   if (researchExpanded) renderPubList(lang);
+    if (hobbyExpanded) renderTravelContent(lang);
 
     document.getElementById('sideAva').textContent = t.chatHeadName;
     document.querySelector('.chat-head .ava').textContent = t.chatHeadName;
