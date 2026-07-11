@@ -328,6 +328,95 @@
 
   /* responsive */
   
+
+  /* ── travel detail modal ── */
+  .travel-modal-overlay{
+    position:fixed;inset:0;z-index:9999;
+    background:rgba(0,0,0,.6);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    padding:24px;
+    animation:fadeIn .25s ease;
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+  }
+  .travel-modal-overlay.active{display:flex}
+  .travel-modal{
+    background:#fff;
+    border-radius:16px;
+    max-width:640px;
+    width:100%;
+    max-height:90vh;
+    overflow-y:auto;
+    box-shadow:0 24px 80px rgba(0,0,0,.3);
+    animation:scaleIn .3s cubic-bezier(.4,0,.2,1);
+    position:relative;
+  }
+  .travel-modal-close{
+    position:absolute;top:12px;right:12px;z-index:10;
+    width:36px;height:36px;
+    border-radius:50%;
+    background:rgba(0,0,0,.5);
+    border:none;
+    color:#fff;
+    font-size:18px;
+    cursor:pointer;
+    display:grid;place-items:center;
+    transition:.2s;
+    line-height:1;
+  }
+  .travel-modal-close:hover{background:rgba(0,0,0,.7);transform:scale(1.1)}
+  .travel-modal-hero{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    background-size:cover;
+    background-position:center;
+    border-radius:16px 16px 0 0;
+    overflow:hidden;
+  }
+  .travel-modal-hero::after{
+    content:'';
+    position:absolute;inset:0;
+    background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 60%);
+    pointer-events:none;
+  }
+  .travel-modal-hero-meta{
+    position:absolute;
+    bottom:16px;left:20px;
+    z-index:5;
+    color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.5);
+  }
+  .travel-modal-hero-meta .tmm-name{font-size:20px;font-weight:700;letter-spacing:.5px}
+  .travel-modal-hero-meta .tmm-date{font-size:13px;opacity:.85;margin-top:2px}
+  .travel-modal-body{padding:20px 24px 24px}
+  .travel-modal-desc{font-size:14.5px;line-height:1.7;color:var(--ink);margin-bottom:20px}
+  .travel-modal-photos-title{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+  .travel-modal-photos{display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px}
+  .travel-modal-photos .tmp-item{
+    aspect-ratio:4/3;
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--card);
+    border:1px solid var(--line);
+    position:relative;
+    cursor:pointer;
+  }
+  .travel-modal-photos .tmp-item img{width:100%;height:100%;object-fit:cover;display:block}
+  .travel-modal-photos .tmp-item .tmp-caption{
+    position:absolute;
+    bottom:0;left:0;right:0;
+    padding:8px 10px;
+    font-size:11px;
+    color:#fff;
+    background:linear-gradient(to top,rgba(0,0,0,.7),transparent);
+    pointer-events:none;
+  }
+  .travel-modal-empty{text-align:center;padding:24px;color:var(--ink-soft);font-size:13px;font-style:italic}
+  @keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+
   /* chat */
   .chat-wrap{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
   .chat-head{padding:20px 24px;background:linear-gradient(120deg,var(--blue-deep),var(--blue) 55%,var(--green));color:#fff;display:flex;align-items:center;gap:14px}
@@ -551,21 +640,21 @@
       travelUSA: '美国 🇺🇸',
       travelData: {
         china: [
-          { name: '重庆', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg' },
-          { name: '西安', date: '2026.01', img: 'https://s1.imagehub.cc/images/2026/07/11/4fed53fbdbf9a69d7757c185ad1f2ffe.jpg' },
-          { name: '阿坝州', date: '2025.08', img: 'https://s1.imagehub.cc/images/2026/07/11/e237d9ecd02e8398def1df8d147cb452.jpg' },
-          { name: '北京', date: '2025.06', img: 'https://s1.imagehub.cc/images/2026/07/11/80bafcbe974d32f17448a7d30f7fee90.jpg' }
+          { name: '重庆', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg', desc: '重庆是一座建在山上的城市，轻轨穿楼而过，长江与嘉陵江在此交汇。五月的重庆已经有些炎热，但江边的微风和火锅的香气让这座城市充满了生命力。从解放碑到洪崖洞，从长江索道到南山一棵树，每一处都留下了独特的记忆。', photos: [] },
+          { name: '西安', date: '2026.01', img: 'https://s1.imagehub.cc/images/2026/07/11/4fed53fbdbf9a69d7757c185ad1f2ffe.jpg', desc: '西安是一座活在历史里的城市，城墙下的单车、钟楼的灯火、回民街的烟火气，还有兵马俑千年的沉默。一月的西安有些冷，但阳光洒在城墙上时，整座城市都泛着金色的光。', photos: [] },
+          { name: '阿坝州', date: '2025.08', img: 'https://s1.imagehub.cc/images/2026/07/11/e237d9ecd02e8398def1df8d147cb452.jpg', desc: '阿坝州的八月，草原上开满了野花，远处是终年不化的雪山。从若尔盖到九寨沟，每一帧都是壁纸。藏族村落里飘着酥油茶的香气，经幡在风里猎猎作响——这里离天空很近。', photos: [] },
+          { name: '北京', date: '2025.06', img: 'https://s1.imagehub.cc/images/2026/07/11/80bafcbe974d32f17448a7d30f7fee90.jpg', desc: '六月的北京，槐花开得正盛。在胡同里穿行，在故宫的红墙下驻足，在后海的晚风里散步。这座城市有太多层叠的故事，每次来都能发现新的角落。', photos: [] }
         ],
         usa: [
-          { name: '塔尔萨', date: '2025', img: 'https://s1.imagehub.cc/images/2026/07/11/c25162eeed6a6894860fec0b6a9ec49f.jpg' },
-          { name: '洛杉矶', date: '2025.05', img: 'https://s1.imagehub.cc/images/2026/07/11/84774ea8a6c9af5f6b7bbe320b4eb156.jpg' },
-          { name: '得克萨斯州', date: '2025.03.15', img: 'https://s1.imagehub.cc/images/2026/07/11/a00cfa522d7d4aa3e24e6f26760b862b.jpg' },
-          { name: '犹他州', date: '2025.03.16', img: 'https://s1.imagehub.cc/images/2026/07/11/05d4ad6bcd41d2160f29558f34038996.jpg' },
-          { name: '亚利桑那州', date: '2025.03.16', img: 'https://s1.imagehub.cc/images/2026/07/11/a186923aa2c4a388197423d6999526ea.jpg' },
-          { name: '拉斯维加斯', date: '2025.03.17-18', img: 'https://s1.imagehub.cc/images/2026/07/11/3fd8fe59e7af882a106b40185c222f7c.jpg' },
-          { name: '加利福尼亚州', date: '2025.03.19-24', img: 'https://s1.imagehub.cc/images/2026/07/11/edfde24386f5d99609b2dd63cb44f04c.jpg' },
-          { name: '内华达州', date: '2025.03.25', img: 'https://s1.imagehub.cc/images/2026/07/11/8a891cd62c2a11815b8d98e9583244d7.jpeg' },
-          { name: '怀俄明州', date: '2025.03.27', img: 'https://s1.imagehub.cc/images/2026/07/11/8d99427dd04bb7af993679f921401db4.jpg' }
+          { name: '塔尔萨', date: '2025', img: 'https://s1.imagehub.cc/images/2026/07/11/c25162eeed6a6894860fec0b6a9ec49f.jpg', desc: '塔尔萨是俄克拉荷马州的一座安静的小城，宽阔的街道和稀疏的人流让它显得有些空旷。但这里的人们很热情，那段时间也在这学会了在空旷的天空下生活。', photos: [] },
+          { name: '洛杉矶', date: '2025.05', img: 'https://s1.imagehub.cc/images/2026/07/11/84774ea8a6c9af5f6b7bbe320b4eb156.jpg', desc: '五月的洛杉矶，阳光正好。圣莫尼卡的海滩、格里菲斯天文台的日落、还有那些藏在街角的小咖啡店。这座城市有一种慵懒又充满可能性的氛围。', photos: [] },
+          { name: '得克萨斯州', date: '2025.03.15', img: 'https://s1.imagehub.cc/images/2026/07/11/a00cfa522d7d4aa3e24e6f26760b862b.jpg', desc: '德州的一切都很大——天空、公路、牛排。三月的德州已经暖和了，开着车在旷野中穿行，路边的野花开得灿烂。牛仔文化、烧烤和南方口音，构成了这段旅程的底色。', photos: [] },
+          { name: '犹他州', date: '2025.03.16', img: 'https://s1.imagehub.cc/images/2026/07/11/05d4ad6bcd41d2160f29558f34038996.jpg', desc: '犹他的地貌像是另一个星球。布莱斯峡谷的岩柱、锡安的峡谷、还有那些红色的砂岩，每一处都让人惊叹自然的鬼斧神工。三月游客不多，整个国家公园像是私享的。', photos: [] },
+          { name: '亚利桑那州', date: '2025.03.16', img: 'https://s1.imagehub.cc/images/2026/07/11/a186923aa2c4a388197423d6999526ea.jpg', desc: '亚利桑那的戈壁有种粗犷的美。马蹄湾的落日把科罗拉多河染成金色，羚羊谷的光束像是从天堂射下来的。佩吉小镇安静得让人觉得时间都变慢了。', photos: [] },
+          { name: '拉斯维加斯', date: '2025.03.17-18', img: 'https://s1.imagehub.cc/images/2026/07/11/3fd8fe59e7af882a106b40185c222f7c.jpg', desc: '拉斯维加斯是一座不夜城，霓虹灯让人分不清白天黑夜。但离开Strip，红岩峡谷就在半小时车程外——这种极致的反差，大概就是拉斯维加斯的魅力。', photos: [] },
+          { name: '加利福尼亚州', date: '2025.03.19-24', img: 'https://s1.imagehub.cc/images/2026/07/11/edfde24386f5d99609b2dd63cb44f04c.jpg', desc: '加州是旅行的最后一站。一号公路的海岸线美得不像话，旧金山的雾、洛杉矶的棕榈树、还有那些藏在路上的小惊喜。这段横跨美国的公路旅行，在这里画上了句号。', photos: [] },
+          { name: '内华达州', date: '2025.03.25', img: 'https://s1.imagehub.cc/images/2026/07/11/8a891cd62c2a11815b8d98e9583244d7.jpeg', desc: '内华达不只有拉斯维加斯。从雷诺到太浩湖，广阔的沙漠和高山湖泊交替出现。三月的太浩湖还有积雪，湖水的蓝色让人移不开眼。', photos: [] },
+          { name: '怀俄明州', date: '2025.03.27', img: 'https://s1.imagehub.cc/images/2026/07/11/8d99427dd04bb7af993679f921401db4.jpg', desc: '怀俄明的黄石国家公园是这次旅行的高潮之一。老忠实泉的准时喷发、大棱镜的斑斓色彩、还有那些野牛和麋鹿，像是走进了国家地理的纪录片。', photos: [] }
         ]
       },
      valueHobby: '摄影 · 人工智能 · 旅行 · 健身 · 音乐',
@@ -634,21 +723,21 @@
       travelUSA: 'USA 🇺🇸',
       travelData: {
         china: [
-          { name: 'Chongqing', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg' },
-          { name: "Xi'an", date: '2026.01', img: 'https://s1.imagehub.cc/images/2026/07/11/4fed53fbdbf9a69d7757c185ad1f2ffe.jpg' },
-          { name: 'Aba Prefecture', date: '2025.08', img: 'https://s1.imagehub.cc/images/2026/07/11/e237d9ecd02e8398def1df8d147cb452.jpg' },
-          { name: 'Beijing', date: '2025.06', img: 'https://s1.imagehub.cc/images/2026/07/11/80bafcbe974d32f17448a7d30f7fee90.jpg' }
+          { name: 'Chongqing', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg', desc: 'Chongqing is a city built on mountains, where light rail trains pass through residential buildings, and the Yangtze and Jialing Rivers meet. May was already warm, but the riverside breeze and aroma of hotpot gave the city its unique vitality.', photos: [] },
+          { name: "Xi'an", date: '2026.01', img: 'https://s1.imagehub.cc/images/2026/07/11/4fed53fbdbf9a69d7757c185ad1f2ffe.jpg', desc: 'Xi\'an is a city living in history — bike rides along the ancient city wall, the glowing bell tower, the bustling Muslim Quarter, and the silent majesty of the Terracotta Warriors. January was cold, but when sunlight hit the wall, the whole city glowed gold.', photos: [] },
+          { name: 'Aba Prefecture', date: '2025.08', img: 'https://s1.imagehub.cc/images/2026/07/11/e237d9ecd02e8398def1df8d147cb452.jpg', desc: 'August in Aba — wildflowers across the grasslands, snow-capped mountains on the horizon. From Ruoergai to Jiuzhaigou, every frame is a wallpaper. The scent of yak butter tea drifts through Tibetan villages, prayer flags flapping in the wind. This place feels close to the sky.', photos: [] },
+          { name: 'Beijing', date: '2025.06', img: 'https://s1.imagehub.cc/images/2026/07/11/80bafcbe974d32f17448a7d30f7fee90.jpg', desc: 'June in Beijing, the pagoda trees in full bloom. Wandering through hutongs, standing beneath the red walls of the Forbidden City, strolling by Houhai Lake in the evening breeze. This city holds layer upon layer of stories.', photos: [] }
         ],
         usa: [
-          { name: 'Tulsa', date: '2025', img: 'https://s1.imagehub.cc/images/2026/07/11/c25162eeed6a6894860fec0b6a9ec49f.jpg' },
-          { name: 'Los Angeles', date: '2025.05', img: 'https://s1.imagehub.cc/images/2026/07/11/84774ea8a6c9af5f6b7bbe320b4eb156.jpg' },
-          { name: 'Texas', date: '2025.03.15', img: 'https://s1.imagehub.cc/images/2026/07/11/a00cfa522d7d4aa3e24e6f26760b862b.jpg' },
-          { name: 'Utah', date: '2025.03.16', img: 'https://s1.imagehub.cc/images/2026/07/11/05d4ad6bcd41d2160f29558f34038996.jpg' },
-          { name: 'Arizona', date: '2025.03.16', img: 'https://s1.imagehub.cc/images/2026/07/11/a186923aa2c4a388197423d6999526ea.jpg' },
-          { name: 'Las Vegas', date: '2025.03.17-18', img: 'https://s1.imagehub.cc/images/2026/07/11/3fd8fe59e7af882a106b40185c222f7c.jpg' },
-          { name: 'California', date: '2025.03.19-24', img: 'https://s1.imagehub.cc/images/2026/07/11/edfde24386f5d99609b2dd63cb44f04c.jpg' },
-          { name: 'Nevada', date: '2025.03.25', img: 'https://s1.imagehub.cc/images/2026/07/11/8a891cd62c2a11815b8d98e9583244d7.jpeg' },
-          { name: 'Wyoming', date: '2025.03.27', img: 'https://s1.imagehub.cc/images/2026/07/11/8d99427dd04bb7af993679f921401db4.jpg' }
+          { name: 'Tulsa', date: '2025', img: 'https://s1.imagehub.cc/images/2026/07/11/c25162eeed6a6894860fec0b6a9ec49f.jpg', desc: 'Tulsa, a quiet small town in Oklahoma. Wide streets and sparse crowds give it a sense of stillness. But the people were warm, and I learned how to live under big, open skies.', photos: [] },
+          { name: 'Los Angeles', date: '2025.05', img: 'https://s1.imagehub.cc/images/2026/07/11/84774ea8a6c9af5f6b7bbe320b4eb156.jpg', desc: 'May in LA, perfect sunshine. Santa Monica beach, sunset at Griffith Observatory, little coffee shops tucked away on side streets. The city has a laid-back energy full of possibilities.', photos: [] },
+          { name: 'Texas', date: '2025.03.15', img: 'https://s1.imagehub.cc/images/2026/07/11/a00cfa522d7d4aa3e24e6f26760b862b.jpg', desc: 'Everything is bigger in Texas — the sky, the roads, the steaks. Mid-March was already warm. Driving through open country with wildflowers blooming along the roadside. Cowboy culture, barbecue, and Southern drawls colored this trip.', photos: [] },
+          { name: 'Utah', date: '2025.03.16', img: 'https://s1.imagehub.cc/images/2026/07/11/05d4ad6bcd41d2160f29558f34038996.jpg', desc: 'Utah\'s landscapes feel like another planet. Bryce Canyon\'s hoodoos, Zion\'s canyons, the red sandstone everywhere — nature\'s masterpiece. Fewer tourists in March, the national parks felt like our own private gallery.', photos: [] },
+          { name: 'Arizona', date: '2025.03.16', img: 'https://s1.imagehub.cc/images/2026/07/11/a186923aa2c4a388197423d6999526ea.jpg', desc: 'Arizona\'s desert has a rugged beauty. Horseshoe Bend at sunset turning the Colorado River gold, Antelope Canyon\'s light beams descending from heaven. Page is so quiet time seems to slow down.', photos: [] },
+          { name: 'Las Vegas', date: '2025.03.17-18', img: 'https://s1.imagehub.cc/images/2026/07/11/3fd8fe59e7af882a106b40185c222f7c.jpg', desc: 'Las Vegas, the city that never sleeps — neon blurring day into night. But step away from the Strip, and Red Rock Canyon is just 30 minutes away. That extreme contrast is Vegas\'s real magic.', photos: [] },
+          { name: 'California', date: '2025.03.19-24', img: 'https://s1.imagehub.cc/images/2026/07/11/edfde24386f5d99609b2dd63cb44f04c.jpg', desc: 'California was the final stop. Highway 1\'s coastline is unreal — San Francisco\'s fog, LA\'s palm trees, and unexpected treasures along the way. This cross-country road trip ended right here.', photos: [] },
+          { name: 'Nevada', date: '2025.03.25', img: 'https://s1.imagehub.cc/images/2026/07/11/8a891cd62c2a11815b8d98e9583244d7.jpeg', desc: 'Nevada is more than Las Vegas. From Reno to Lake Tahoe, vast deserts give way to alpine lakes. March snow still capped Tahoe, the blue of the lake utterly mesmerizing.', photos: [] },
+          { name: 'Wyoming', date: '2025.03.27', img: 'https://s1.imagehub.cc/images/2026/07/11/8d99427dd04bb7af993679f921401db4.jpg', desc: 'Yellowstone in Wyoming was one of the trip\'s highlights. Old Faithful\'s punctual eruption, the prismatic colors of Grand Prismatic Spring, bison and elk roaming free — like stepping into a National Geographic documentary.', photos: [] }
         ]
       },
      valueHobby: 'Photography · AI · travel · workout · music',
@@ -712,16 +801,16 @@
     const t = i18n[lang];
     const container = document.getElementById('travelContent');
     if (!container) return;
-    const renderCards = (locs) => locs.map(l => `
-      <div class="location-card${l.img ? ' has-bg' : ''}"${l.img ? ` style="background-image:url('${l.img}')"` : ''}>
+    const renderCards = (locs, key) => locs.map((l, i) => `
+      <div class="location-card${l.img ? ' has-bg' : ''}${l.desc ? ' has-detail' : ''}"${l.img ? ` style="background-image:url('${l.img}')"` : ''} data-key="${key}" data-index="${i}">
         <div class="lc-inner">
           <span class="lc-name">${l.name}</span>
           <span class="lc-date">${l.date}</span>
         </div>
       </div>`).join('');
     container.innerHTML =
-      '<div class="travel-country"><div class="tc-label">' + t.travelChina + '</div><div class="location-grid">' + renderCards(t.travelData.china) + '</div></div>' +
-      '<div class="travel-country"><div class="tc-label">' + t.travelUSA + '</div><div class="location-grid">' + renderCards(t.travelData.usa) + '</div></div>';
+      '<div class="travel-country"><div class="tc-label">' + t.travelChina + '</div><div class="location-grid">' + renderCards(t.travelData.china, 'china') + '</div></div>' +
+      '<div class="travel-country"><div class="tc-label">' + t.travelUSA + '</div><div class="location-grid">' + renderCards(t.travelData.usa, 'usa') + '</div></div>';
     // set min-width on desktop; on mobile the CSS grid handles wrapping
     if (window.innerWidth > 899) {
       requestAnimationFrame(() => {
@@ -753,6 +842,67 @@
         });
       });
     });
+    
+    // open detail modal on card click
+    container.querySelectorAll('.location-card.has-detail').forEach(card => {
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = card.dataset.key;
+        const idx = parseInt(card.dataset.index);
+        const loc = t.travelData[key][idx];
+        if (!loc || !loc.desc) return;
+        openTravelModal(loc, lang);
+      });
+    });
+  }
+
+  function openTravelModal(loc, lang) {
+    const existing = document.querySelector('.travel-modal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'travel-modal-overlay active';
+
+    const photosHtml = loc.photos && loc.photos.length > 0
+      ? loc.photos.map(p => `
+          <div class="tmp-item">
+            <img src="${p.url}" alt="${p.caption}" loading="lazy" />
+            <div class="tmp-caption">${p.caption}</div>
+          </div>`).join('')
+      : '<div class="travel-modal-empty">' + (lang === 'zh' ? '更多照片待上传 ✈️' : 'More photos coming soon ✈️') + '</div>';
+
+    overlay.innerHTML = `
+      <div class="travel-modal" onclick="event.stopPropagation()">
+        <button class="travel-modal-close" onclick="this.closest('.travel-modal-overlay').classList.remove('active');setTimeout(()=>this.closest('.travel-modal-overlay').remove(),300)">&times;</button>
+        <div class="travel-modal-hero" style="background-image:url('${loc.img}')">
+          <div class="travel-modal-hero-meta">
+            <div class="tmm-name">${loc.name}</div>
+            <div class="tmm-date">${loc.date}</div>
+          </div>
+        </div>
+        <div class="travel-modal-body">
+          <div class="travel-modal-desc">${loc.desc}</div>
+          <div class="travel-modal-photos-title">${lang === 'zh' ? '📸 更多照片' : '📸 More Photos'}</div>
+          <div class="travel-modal-photos">${photosHtml}</div>
+        </div>
+      </div>`;
+
+    overlay.addEventListener('click', () => {
+      overlay.classList.remove('active');
+      setTimeout(() => overlay.remove(), 300);
+    });
+
+    document.body.appendChild(overlay);
+    // prevent body scroll while modal is open
+    document.body.style.overflow = 'hidden';
+    // restore scroll on close
+    const observer = new MutationObserver(() => {
+      if (!document.body.contains(overlay)) {
+        document.body.style.overflow = '';
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: false });
   }
   function toggleHobby() {
     const card = document.getElementById('hobbyCard');
