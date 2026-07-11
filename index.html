@@ -218,6 +218,20 @@
     position:absolute;inset:0;
     background:linear-gradient(160deg,rgba(216,245,238,.35) 0%,rgba(227,244,251,.25) 50%,#fff 100%);
     pointer-events:none;
+    z-index:1;
+  }
+  .location-card.has-bg{
+    background-size:cover;
+    background-position:center;
+    border-color:transparent;
+  }
+  .location-card.has-bg::before{
+    background:linear-gradient(to top,rgba(0,0,0,.5) 0%,rgba(0,0,0,.1) 50%,transparent 100%);
+  }
+  .location-card.has-bg .lc-name,
+  .location-card.has-bg .lc-date{
+    color:#fff;
+    text-shadow:0 1px 4px rgba(0,0,0,.4);
   }
 
   .lc-inner{
@@ -292,6 +306,25 @@
   .location-card:nth-child(8){left:567px;z-index:13}
   .location-card:nth-child(9){left:648px;z-index:12}
   .location-card:nth-child(10){left:729px;z-index:11}
+
+  /* ── floated: previous cards lift up with vertical name at bottom-left ── */
+  .location-card.floated{
+    z-index:30!important;
+    transform:translateY(-8px);
+    box-shadow:0 8px 24px -8px rgba(11,111,184,.2);
+  }
+  .location-card.floated .lc-inner{
+    display:block;
+  }
+  .location-card.floated .lc-name{
+    position:absolute;
+    bottom:14px;left:14px;right:auto;
+    writing-mode:vertical-rl;
+    text-orientation:mixed;
+  }
+  .location-card.floated .lc-date{
+    display:none;
+  }
 
   /* responsive */
   @media(max-width:600px){
@@ -526,9 +559,10 @@
       travelUSA: '美国 🇺🇸',
       travelData: {
         china: [
-          { name: '重庆', date: '2026.05' },
-          { name: '阿坝州', date: '2025.08' },
-          { name: '北京', date: '2025.06' }
+          { name: '重庆', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg' },
+          { name: '西安', date: '2026.01', img: 'https://s1.imagehub.cc/images/2026/07/11/4fed53fbdbf9a69d7757c185ad1f2ffe.jpg' },
+          { name: '阿坝州', date: '2025.08', img: 'https://s1.imagehub.cc/images/2026/07/11/e237d9ecd02e8398def1df8d147cb452.jpg' },
+          { name: '北京', date: '2025.06', img: 'https://s1.imagehub.cc/images/2026/07/11/80bafcbe974d32f17448a7d30f7fee90.jpg' }
         ],
         usa: [
           { name: '塔尔萨', date: '2025' },
@@ -608,9 +642,10 @@
       travelUSA: 'USA 🇺🇸',
       travelData: {
         china: [
-          { name: 'Chongqing', date: '2026.05' },
-          { name: 'Aba Prefecture', date: '2025.08' },
-          { name: 'Beijing', date: '2025.06' }
+          { name: 'Chongqing', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg' },
+          { name: "Xi'an", date: '2026.01', img: 'https://s1.imagehub.cc/images/2026/07/11/4fed53fbdbf9a69d7757c185ad1f2ffe.jpg' },
+          { name: 'Aba Prefecture', date: '2025.08', img: 'https://s1.imagehub.cc/images/2026/07/11/e237d9ecd02e8398def1df8d147cb452.jpg' },
+          { name: 'Beijing', date: '2025.06', img: 'https://s1.imagehub.cc/images/2026/07/11/80bafcbe974d32f17448a7d30f7fee90.jpg' }
         ],
         usa: [
           { name: 'Tulsa', date: '2025' },
@@ -686,7 +721,7 @@
     const container = document.getElementById('travelContent');
     if (!container) return;
     const renderCards = (locs) => locs.map(l => `
-      <div class="location-card">
+      <div class="location-card${l.img ? ' has-bg' : ''}"${l.img ? ` style="background-image:url('${l.img}')"` : ''}>
         <div class="lc-inner">
           <span class="lc-name">${l.name}</span>
           <span class="lc-date">${l.date}</span>
@@ -705,6 +740,23 @@
           const totalW = last.offsetLeft + cardW + 8;
           grid.style.minWidth = totalW + 'px';
         }
+      });
+    });
+
+    // float previous cards on hover
+    container.querySelectorAll('.location-grid').forEach(grid => {
+      const cards = grid.querySelectorAll('.location-card');
+      cards.forEach((card) => {
+        card.addEventListener('mouseenter', () => {
+          let prev = card.previousElementSibling;
+          while (prev) {
+            if (prev.classList.contains('location-card')) prev.classList.add('floated');
+            prev = prev.previousElementSibling;
+          }
+        });
+        card.addEventListener('mouseleave', () => {
+          cards.forEach(c => c.classList.remove('floated'));
+        });
       });
     });
   }
