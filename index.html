@@ -497,6 +497,9 @@
     .location-card .lc-name{position:static;writing-mode:horizontal-tb;font-size:13px}
     .location-card .lc-date{display:block;font-size:10px}
     .location-card.floated{transform:none!important}
+    .location-card.floated .lc-name{position:static;writing-mode:horizontal-tb;font-size:13px}
+    .location-card.floated .lc-date{display:block;font-size:10px}
+
     .location-card::before{background:linear-gradient(to top,rgba(0,0,0,.5) 0%,rgba(0,0,0,.1) 50%,transparent 100%)}
     .location-card:hover{transform:none!important;box-shadow:0 2px 10px -4px rgba(0,0,0,.1)}
   
@@ -853,6 +856,7 @@
       const cards = grid.querySelectorAll('.location-card');
       cards.forEach((card) => {
         card.addEventListener('mouseenter', () => {
+          if (window.innerWidth < 900) return;
           let prev = card.previousElementSibling;
           while (prev) {
             if (prev.classList.contains('location-card')) prev.classList.add('floated');
@@ -860,6 +864,7 @@
           }
         });
         card.addEventListener('mouseleave', () => {
+          if (window.innerWidth < 900) return;
           cards.forEach(c => c.classList.remove('floated'));
         });
       });
