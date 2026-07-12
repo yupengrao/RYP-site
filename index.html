@@ -447,6 +447,10 @@
   .tmn-counter{font-size:12px;color:var(--ink-soft);font-family:'Space Grotesk';font-weight:500;letter-spacing:.5px}
 
   @keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+@keyframes scaleOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.92)}}
+.travel-modal-overlay.closing{display:flex;animation:fadeOut .2s ease forwards}
+.travel-modal-overlay.closing .travel-modal-viewport{animation:scaleOut .2s ease forwards}
 
   /* chat */
   .chat-wrap{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
@@ -1029,6 +1033,13 @@
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.className = 'travel-modal-overlay active';
+      overlay.onclick = function(e) {
+        if (e.target === this) {
+          this.classList.replace("active","closing");
+          this._navSeq = (this._navSeq || 0) + 1;
+          setTimeout(() => { if (document.body.contains(this)) this.remove(); }, 260);
+        }
+      };
       document.body.appendChild(overlay);
       document.body.style.overflow = 'hidden';
       const observer = new MutationObserver(() => {
@@ -1047,7 +1058,7 @@
     const total = i18n[lang].travelData[key].length;
     overlay.innerHTML = `
       <div class="travel-modal-viewport" onclick="event.stopPropagation()">
-        <button class="travel-modal-close" onclick="this.closest('.travel-modal-overlay').classList.remove('active');setTimeout(()=>this.closest('.travel-modal-overlay').remove(),300)">&times;</button>
+        <button class="travel-modal-close" onclick="this.closest('.travel-modal-overlay').classList.replace('active','closing');setTimeout(()=>this.closest('.travel-modal-overlay').remove(),260)">&times;</button>
         <div class="travel-modal-card active" data-slot="0">
           <div class="travel-modal-hero" style="background-image:url('${loc.img}')">
             <div class="travel-modal-hero-meta">
