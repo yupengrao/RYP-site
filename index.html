@@ -418,7 +418,7 @@
   .travel-modal-desc{font-size:16px;line-height:1.7;color:var(--ink);margin-bottom:25px}
   .travel-modal-photos-title{font-size:13px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:25px}
   .travel-modal-photos{display:flex;flex-direction:column;gap:0}
-  .travel-modal-photos .tmp-item{display:flex;flex-direction:row;gap:20px;margin-bottom:32px;line-height:0}
+  .travel-modal-photos .tmp-item{display:flex;flex-direction:row;gap:20px;margin-bottom:32px;line-height:0;opacity:0;transition:opacity .35s ease}
   .travel-modal-photos .tmp-item:last-child{margin-bottom:0}
   .travel-modal-photos .tmp-item img{display:block;object-fit:contain;align-self:flex-start;width:75%}
 .travel-modal-photos .tmp-item.portrait img{width:50%}
@@ -1095,17 +1095,20 @@
   function classifyImageOrientation(container) {
     if (!container) return;
     container.querySelectorAll(".tmp-item img").forEach(function(img) {
-      var check = function() {
+      var item = img.closest(".tmp-item");
+      var reveal = function() {
         if (img.naturalWidth) {
-          img.closest(".tmp-item").classList.add(
+          item.classList.add(
             img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
           );
         }
+        item.style.opacity = "1";
       };
       if (img.complete && img.naturalWidth) {
-        check();
+        reveal();
       } else {
-        img.onload = check;
+        img.onload = reveal;
+        img.onerror = reveal;
       }
     });
   }
