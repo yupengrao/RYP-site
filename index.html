@@ -353,17 +353,21 @@
     -webkit-backdrop-filter:blur(4px);
   }
   .travel-modal-overlay.active{display:flex}
-  .travel-modal{
-    background:#fff;
-    border-radius:16px;
+  .travel-modal-viewport{
+    position:relative;
     max-width:640px;
     width:100%;
     max-height:90vh;
-    overflow-y:auto;
+    border-radius:16px;
+    background:#fff;
     box-shadow:0 24px 80px rgba(0,0,0,.3);
+    overflow:hidden;
     animation:scaleIn .3s cubic-bezier(.4,0,.2,1);
-    position:relative;
   }
+  .travel-modal-card{
+    width:100%;max-height:90vh;overflow-y:auto;display:none;
+  }
+  .travel-modal-card.active{display:block}
   .travel-modal-close{
     position:absolute;top:12px;right:12px;z-index:10;
     width:36px;height:36px;
@@ -379,10 +383,10 @@
     opacity:0;
     pointer-events:none;
   }
-  .travel-modal:has(.travel-modal-hero:hover) .travel-modal-close{opacity:1;pointer-events:auto}
+  .travel-modal-viewport:has(.travel-modal-hero:hover) .travel-modal-close{opacity:1;pointer-events:auto}
   .travel-modal-close:hover{opacity:1!important;pointer-events:auto!important;background:rgba(0,0,0,.7);transform:scale(1.1)}
   .travel-modal-start .travel-modal-close,
-  .travel-modal-start .travel-modal-nav{opacity:1!important;pointer-events:auto!important}
+  .travel-modal-start .travel-modal-card .travel-modal-nav{opacity:1!important;pointer-events:auto!important}
 
   
   .travel-modal-hero{
@@ -442,10 +446,6 @@
   .tmn-counter{font-size:12px;color:var(--ink-soft);font-family:'Space Grotesk';font-weight:500;letter-spacing:.5px}
 
   @keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
-@keyframes subtleIn{from{opacity:.82;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
-@keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.travel-modal-switching .travel-modal{animation:subtleIn .25s ease}
-.travel-modal-switching .travel-modal-hero-meta{animation:fadeSlideUp .3s ease}
 
   /* chat */
   .chat-wrap{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
@@ -917,6 +917,99 @@
     let overlay = document.querySelector('.travel-modal-overlay');
     window._modalNavState = { key, idx, lang };
 
+    const photosHtml = loc.photos && loc.photos.length > 0
+      ? loc.photos.map(p => `
+          <div class="tmp-item">
+            <img src="${p.url}" alt="${p.caption}" loading="lazy" />
+            <div class="tmp-caption">${p.caption}</div>
+          </div>`).join('')
+      : '<div class="travel-modal-empty">' + (lang === 'zh' ? '更多照片待上传 ✈️' : 'More photos coming soon ✈️') + '</div>';
+
+    // ── Dual-container navigation: zero-gap crossfade ──
+    if (isNav && overlay && overlay.querySelector('.travel-modal-viewport')) {
+      const viewport = overlay.querySelector('.travel-modal-viewport');
+      const slots = viewport.querySelectorAll('.travel-modal-card');
+      const curSlot = viewport.querySelector('.travel-modal-card.active');
+      const nxtSlot = viewport.querySelector('.travel-modal-card:not(.active)');
+      if (!curSlot || !nxtSlot) return;
+
+      overlay._navSeq = (overlay._navSeq || 0) + 1;
+      const mySeq = overlay._navSeq;
+
+      const navLabel = lang === 'zh' ? '📸 更多照片' : '📸 More Photos';
+      const total = i18n[lang].travelData[key].length;
+
+      const doSwitch = () => {
+        if (overlay._navSeq !== mySeq) return;
+
+        // 1) Fill hidden slot with new content
+        nxtSlot.innerHTML = `
+          <div class="travel-modal-hero" style="background-image:url('${loc.img}')">
+            <div class="travel-modal-hero-meta">
+              <div class="tmm-name">${loc.name}</div>
+              <div class="tmm-date">${loc.date}</div>
+            </div>
+          </div>
+          <div class="travel-modal-body">
+            <div class="travel-modal-desc">${loc.desc}</div>
+            <div class="travel-modal-photos-title">${navLabel}</div>
+            <div class="travel-modal-photos">${photosHtml}</div>
+            <div class="travel-modal-nav">
+              <button class="tmn-btn" onclick="navigateModal(-1)" ${idx <= 0 ? 'disabled' : ''} aria-label="Previous">&#8592;</button>
+              <span class="tmn-counter">${idx + 1} / ${total}</span>
+              <button class="tmn-btn" onclick="navigateModal(1)" ${idx >= total - 1 ? 'disabled' : ''} aria-label="Next">&#8594;</button>
+            </div>
+          </div>`;
+
+        // 2) Set initial transform BEFORE display — the key to zero-gap
+        nxtSlot.style.cssText =
+          'display:block;position:absolute;top:0;left:0;right:0;bottom:0;' +
+          'width:100%;max-height:90vh;overflow-y:auto;' +
+          'opacity:0;transform:scale(0.97);pointer-events:none;';
+
+        // 3) Force reflow — browser must commit the initial state
+        void nxtSlot.offsetHeight;
+
+        // 4) Kick off both transitions in the same frame
+        requestAnimationFrame(() => {
+          if (overlay._navSeq !== mySeq) return;
+
+          // old card exits
+          curSlot.style.transition = 'opacity .28s ease,transform .28s ease';
+          curSlot.style.opacity = '0';
+          curSlot.style.transform = 'scale(0.97)';
+
+          // new card enters
+          nxtSlot.style.transition = 'opacity .28s ease,transform .28s ease';
+          nxtSlot.style.opacity = '1';
+          nxtSlot.style.transform = 'scale(1)';
+        });
+
+        // 5) After transition: swap active slot
+        const finish = () => {
+          if (overlay._navSeq !== mySeq) return;
+          curSlot.style.cssText = 'display:none;';
+          curSlot.classList.remove('active');
+          curSlot.innerHTML = '';
+          nxtSlot.style.cssText = '';
+          nxtSlot.classList.add('active');
+        };
+        nxtSlot.addEventListener('transitionend', finish, { once: true });
+        setTimeout(finish, 320);
+      };
+
+      // Preload hero image, then switch
+      if (loc.img) {
+        const img = new Image();
+        img.onload = doSwitch;
+        img.onerror = doSwitch;
+        img.src = loc.img;
+      } else {
+        doSwitch();
+      }
+      return;
+    }
+
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.className = 'travel-modal-overlay active';
@@ -932,41 +1025,32 @@
     }
     overlay.classList.add('active');
 
-    // subdued animation when switching via nav buttons
-    if (isNav) {
-      overlay.classList.add('travel-modal-switching');
-      setTimeout(() => overlay.classList.remove('travel-modal-switching'), 350);
-    } else {
-      overlay.classList.remove('travel-modal-switching');
-    }
+    // switching animation handled by dual-container logic above
 
-    const photosHtml = loc.photos && loc.photos.length > 0
-      ? loc.photos.map(p => `
-          <div class="tmp-item">
-            <img src="${p.url}" alt="${p.caption}" loading="lazy" />
-            <div class="tmp-caption">${p.caption}</div>
-          </div>`).join('')
-      : '<div class="travel-modal-empty">' + (lang === 'zh' ? '更多照片待上传 ✈️' : 'More photos coming soon ✈️') + '</div>';
-
+    const navLabel = lang === 'zh' ? '📸 更多照片' : '📸 More Photos';
+    const total = i18n[lang].travelData[key].length;
     overlay.innerHTML = `
-      <div class="travel-modal" onclick="event.stopPropagation()">
+      <div class="travel-modal-viewport" onclick="event.stopPropagation()">
         <button class="travel-modal-close" onclick="this.closest('.travel-modal-overlay').classList.remove('active');setTimeout(()=>this.closest('.travel-modal-overlay').remove(),300)">&times;</button>
-        <div class="travel-modal-hero" style="background-image:url('${loc.img}')">
-          <div class="travel-modal-hero-meta">
-            <div class="tmm-name">${loc.name}</div>
-            <div class="tmm-date">${loc.date}</div>
+        <div class="travel-modal-card active" data-slot="0">
+          <div class="travel-modal-hero" style="background-image:url('${loc.img}')">
+            <div class="travel-modal-hero-meta">
+              <div class="tmm-name">${loc.name}</div>
+              <div class="tmm-date">${loc.date}</div>
+            </div>
+          </div>
+          <div class="travel-modal-body">
+            <div class="travel-modal-desc">${loc.desc}</div>
+            <div class="travel-modal-photos-title">${navLabel}</div>
+            <div class="travel-modal-photos">${photosHtml}</div>
+            <div class="travel-modal-nav">
+              <button class="tmn-btn" onclick="navigateModal(-1)" ${idx <= 0 ? 'disabled' : ''} aria-label="Previous">&#8592;</button>
+              <span class="tmn-counter">${idx + 1} / ${total}</span>
+              <button class="tmn-btn" onclick="navigateModal(1)" ${idx >= total - 1 ? 'disabled' : ''} aria-label="Next">&#8594;</button>
+            </div>
           </div>
         </div>
-        <div class="travel-modal-body">
-          <div class="travel-modal-desc">${loc.desc}</div>
-          <div class="travel-modal-photos-title">${lang === 'zh' ? '📸 更多照片' : '📸 More Photos'}</div>
-          <div class="travel-modal-photos">${photosHtml}</div>
-          <div class="travel-modal-nav">
-            <button class="tmn-btn" onclick="navigateModal(-1)" ${idx <= 0 ? 'disabled' : ''} aria-label="Previous">&#8592;</button>
-            <span class="tmn-counter">${idx + 1} / ${i18n[lang].travelData[key].length}</span>
-            <button class="tmn-btn" onclick="navigateModal(1)" ${idx >= i18n[lang].travelData[key].length - 1 ? 'disabled' : ''} aria-label="Next">&#8594;</button>
-          </div>
-        </div>
+        <div class="travel-modal-card" data-slot="1"></div>
       </div>`;
 
     if (window.innerWidth > 899) {
