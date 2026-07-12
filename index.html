@@ -442,6 +442,10 @@
   .tmn-counter{font-size:12px;color:var(--ink-soft);font-family:'Space Grotesk';font-weight:500;letter-spacing:.5px}
 
   @keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes subtleIn{from{opacity:.82;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.travel-modal-switching .travel-modal{animation:subtleIn .25s ease}
+.travel-modal-switching .travel-modal-hero-meta{animation:fadeSlideUp .3s ease}
 
   /* chat */
   .chat-wrap{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}
@@ -909,13 +913,32 @@
     });
   }
 
-  function openTravelModal(loc, lang, key, idx) {
-    const existing = document.querySelector('.travel-modal-overlay');
-    if (existing) existing.remove();
+  function openTravelModal(loc, lang, key, idx, isNav) {
+    let overlay = document.querySelector('.travel-modal-overlay');
     window._modalNavState = { key, idx, lang };
 
-    const overlay = document.createElement('div');
-    overlay.className = 'travel-modal-overlay active';
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'travel-modal-overlay active';
+      document.body.appendChild(overlay);
+      document.body.style.overflow = 'hidden';
+      const observer = new MutationObserver(() => {
+        if (!document.body.contains(overlay)) {
+          document.body.style.overflow = '';
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: false });
+    }
+    overlay.classList.add('active');
+
+    // subdued animation when switching via nav buttons
+    if (isNav) {
+      overlay.classList.add('travel-modal-switching');
+      setTimeout(() => overlay.classList.remove('travel-modal-switching'), 350);
+    } else {
+      overlay.classList.remove('travel-modal-switching');
+    }
 
     const photosHtml = loc.photos && loc.photos.length > 0
       ? loc.photos.map(p => `
@@ -946,27 +969,10 @@
         </div>
       </div>`;
 
-    overlay.addEventListener('click', () => {
-      overlay.classList.remove('active');
-      setTimeout(() => overlay.remove(), 300);
-    });
-
-    document.body.appendChild(overlay);
-    // show controls briefly for first-time awareness
     if (window.innerWidth > 899) {
       overlay.classList.add('travel-modal-start');
       setTimeout(() => overlay.classList.remove('travel-modal-start'), 2500);
     }
-    // prevent body scroll while modal is open
-    document.body.style.overflow = 'hidden';
-    // restore scroll on close
-    const observer = new MutationObserver(() => {
-      if (!document.body.contains(overlay)) {
-        document.body.style.overflow = '';
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: false });
   }
   function navigateModal(dir) {
     const state = window._modalNavState;
@@ -975,7 +981,7 @@
     const locs = t.travelData[state.key];
     const newIdx = state.idx + dir;
     if (newIdx < 0 || newIdx >= locs.length) return;
-    openTravelModal(locs[newIdx], state.lang, state.key, newIdx);
+    openTravelModal(locs[newIdx], state.lang, state.key, newIdx, true);
   }
   
   function toggleHobby() {
