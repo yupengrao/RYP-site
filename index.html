@@ -417,27 +417,22 @@
   .travel-modal-body{padding:20px 24px 24px}
   .travel-modal-desc{font-size:14.5px;line-height:1.7;color:var(--ink);margin-bottom:20px}
   .travel-modal-photos-title{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
-  .travel-modal-photos{display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px}
-  .travel-modal-photos .tmp-item{
-    aspect-ratio:4/3;
-    border-radius:10px;
-    overflow:hidden;
-    background:var(--card);
-    border:1px solid var(--line);
-    position:relative;
-    cursor:pointer;
-  }
-  .travel-modal-photos .tmp-item img{width:100%;height:100%;object-fit:cover;display:block}
+  .travel-modal-photos{display:flex;flex-direction:column;gap:0}
+  .travel-modal-photos .tmp-item{display:flex;flex-direction:row;gap:20px;margin-bottom:32px;line-height:0}
+  .travel-modal-photos .tmp-item:last-child{margin-bottom:0}
+  .travel-modal-photos .tmp-item img{display:block;object-fit:contain;align-self:flex-start;width:75%}
+.travel-modal-photos .tmp-item.portrait img{width:50%}
   .travel-modal-photos .tmp-item .tmp-caption{
-    position:absolute;
-    bottom:0;left:0;right:0;
-    padding:8px 10px;
-    font-size:11px;
-    color:#fff;
-    background:linear-gradient(to top,rgba(0,0,0,.7),transparent);
-    pointer-events:none;
+    margin-top:0;flex:1;align-self:flex-start;
+    font-size:13px;
+    line-height:1.6;
+    color:var(--ink-soft);
+    padding:0;
   }
-  .travel-modal-empty{text-align:center;padding:24px;color:var(--ink-soft);font-size:13px;font-style:italic}
+.tmpc-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px;line-height:1.3}
+.tmpc-date{font-size:11px;color:var(--ink-soft);margin-bottom:6px;font-family:"Space Grotesk";letter-spacing:.5px;line-height:1}
+.tmpc-desc{font-size:13px;line-height:1.6;color:var(--ink-soft)}
+ .travel-modal-empty{text-align:center;padding:24px;color:var(--ink-soft);font-size:13px;font-style:italic}
   .travel-modal-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:0;opacity:0;transition:opacity .25s ease;pointer-events:none}
   .travel-modal-body:hover .travel-modal-nav,.travel-modal-nav:hover{opacity:1;pointer-events:auto}
   .tmn-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.2s;line-height:1}
@@ -688,7 +683,7 @@
       travelUSA: '美国 🇺🇸',
       travelData: {
         china: [
-          { name: '重庆', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg', desc: '重庆是一座建在山上的城市，轻轨穿楼而过，长江与嘉陵江在此交汇。五月的重庆已经有些炎热，但江边的微风和火锅的香气让这座城市充满了生命力。从解放碑到洪崖洞，从长江索道到南山一棵树，每一处都留下了独特的记忆。', photos: [] },
+          { name: '重庆', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg', desc: '重庆是一座建在山上的城市，轻轨穿楼而过，长江与嘉陵江在此交汇。五月的重庆已经有些炎热，但江边的微风和火锅的香气让这座城市充满了生命力。从解放碑到洪崖洞，从长江索道到南山一棵树，每一处都留下了独特的记忆。', photos: [{ url: 'https://s1.imagehub.cc/images/2026/07/12/77973ed12213843c30fab6307e2a03d5.jpg', caption: '红墙古檐与摩天大楼隔空相望，传统与现代在重庆的天际线上交织' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/edb40e980590ee1a6d37f5001ff52f35.jpeg', caption: '嘉陵江畔的城市轮廓，山城建筑在薄雾中层层叠叠、若隐若现' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/acef9829d83fa9d4d8c6d8609b101af9.jpg', caption: '夜幕下万家灯火沿山势起伏铺展，如同星河坠落人间' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/c3cccdc06fb1a7408e8fd5f0eaf3fa9b.jpg', caption: '轻轨穿行于楼宇之间——重庆独有的城市风景线' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/90c6a38736aacf15bce61a70e02a4034.jpg', caption: '长江索道缓缓跨江而过，缆车里装满了这座山城的烟火气' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/3baaa754fd3a9a833d72195674f5619b.jpg', caption: '山城巷陌深处，石板阶梯上刻着这座城市的生活温度' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/1101096fe80a01c0221b606f67d60a18.jpg', caption: '江畔灯火渐起，吊脚楼的影子倒映在江水之中轻轻晃动' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/500daf5701fbf8bd69ecbc18797b3a51.jpg', caption: '南山之巅俯瞰渝中半岛，两江交汇处的夜色璀璨得让人出神' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/7519bc0bd22e206e903fcbdad2eb03d6.jpg', caption: '重庆古今建筑重叠，远处的千厮门大桥下长江与嘉陵江交汇' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/589aba6cc1ebedb429ac5aec8be87ffb.jpg', caption: '解放碑的霓虹灯下，现代都市的脉搏与老街的烟火气交织在一起' } ] },
           { name: '西安', date: '2026.01', img: 'https://s1.imagehub.cc/images/2026/07/11/4fed53fbdbf9a69d7757c185ad1f2ffe.jpg', desc: '西安是一座活在历史里的城市，城墙下的单车、钟楼的灯火、回民街的烟火气，还有兵马俑千年的沉默。一月的西安有些冷，但阳光洒在城墙上时，整座城市都泛着金色的光。', photos: [] },
           { name: '阿坝州', date: '2025.08', img: 'https://s1.imagehub.cc/images/2026/07/11/e237d9ecd02e8398def1df8d147cb452.jpg', desc: '阿坝州的八月，草原上开满了野花，远处是终年不化的雪山。从若尔盖到九寨沟，每一帧都是壁纸。藏族村落里飘着酥油茶的香气，经幡在风里猎猎作响——这里离天空很近。', photos: [] },
           { name: '北京', date: '2025.06', img: 'https://s1.imagehub.cc/images/2026/07/11/80bafcbe974d32f17448a7d30f7fee90.jpg', desc: '六月的北京，槐花开得正盛。在胡同里穿行，在故宫的红墙下驻足，在后海的晚风里散步。这座城市有太多层叠的故事，每次来都能发现新的角落。', photos: [] }
@@ -772,7 +767,7 @@
       travelUSA: 'USA 🇺🇸',
       travelData: {
         china: [
-          { name: 'Chongqing', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg', desc: 'Chongqing is a city built on mountains, where light rail trains pass through residential buildings, and the Yangtze and Jialing Rivers meet. May was already warm, but the riverside breeze and aroma of hotpot gave the city its unique vitality.', photos: [] },
+          { name: 'Chongqing', date: '2026.05', img: 'https://s1.imagehub.cc/images/2026/07/11/8cd806022a4c275d2c5c8db178a20852.jpg', desc: 'Chongqing is a city built on mountains, where light rail trains pass through residential buildings, and the Yangtze and Jialing Rivers meet. May was already warm, but the riverside breeze and aroma of hotpot gave the city its unique vitality.', photos: [{ url: 'https://s1.imagehub.cc/images/2026/07/12/77973ed12213843c30fab6307e2a03d5.jpg', caption: '红墙古檐与摩天大楼隔空相望，传统与现代在重庆的天际线上交织' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/edb40e980590ee1a6d37f5001ff52f35.jpeg', caption: '嘉陵江畔的城市轮廓，山城建筑在薄雾中层层叠叠、若隐若现' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/acef9829d83fa9d4d8c6d8609b101af9.jpg', caption: '夜幕下万家灯火沿山势起伏铺展，如同星河坠落人间' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/c3cccdc06fb1a7408e8fd5f0eaf3fa9b.jpg', caption: '轻轨穿行于楼宇之间——重庆独有的城市风景线' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/90c6a38736aacf15bce61a70e02a4034.jpg', caption: '长江索道缓缓跨江而过，缆车里装满了这座山城的烟火气' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/3baaa754fd3a9a833d72195674f5619b.jpg', caption: '山城巷陌深处，石板阶梯上刻着这座城市的生活温度' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/1101096fe80a01c0221b606f67d60a18.jpg', caption: '江畔灯火渐起，吊脚楼的影子倒映在江水之中轻轻晃动' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/500daf5701fbf8bd69ecbc18797b3a51.jpg', caption: '南山之巅俯瞰渝中半岛，两江交汇处的夜色璀璨得让人出神' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/7519bc0bd22e206e903fcbdad2eb03d6.jpg', caption: '重庆古今建筑重叠，远处的千厮门大桥下长江与嘉陵江交汇' }, { url: 'https://s1.imagehub.cc/images/2026/07/12/589aba6cc1ebedb429ac5aec8be87ffb.jpg', caption: '解放碑的霓虹灯下，现代都市的脉搏与老街的烟火气交织在一起' } ] },
           { name: "Xi'an", date: '2026.01', img: 'https://s1.imagehub.cc/images/2026/07/11/4fed53fbdbf9a69d7757c185ad1f2ffe.jpg', desc: 'Xi\'an is a city living in history — bike rides along the ancient city wall, the glowing bell tower, the bustling Muslim Quarter, and the silent majesty of the Terracotta Warriors. January was cold, but when sunlight hit the wall, the whole city glowed gold.', photos: [] },
           { name: 'Aba Prefecture', date: '2025.08', img: 'https://s1.imagehub.cc/images/2026/07/11/e237d9ecd02e8398def1df8d147cb452.jpg', desc: 'August in Aba — wildflowers across the grasslands, snow-capped mountains on the horizon. From Ruoergai to Jiuzhaigou, every frame is a wallpaper. The scent of yak butter tea drifts through Tibetan villages, prayer flags flapping in the wind. This place feels close to the sky.', photos: [] },
           { name: 'Beijing', date: '2025.06', img: 'https://s1.imagehub.cc/images/2026/07/11/80bafcbe974d32f17448a7d30f7fee90.jpg', desc: 'June in Beijing, the pagoda trees in full bloom. Wandering through hutongs, standing beneath the red walls of the Forbidden City, strolling by Houhai Lake in the evening breeze. This city holds layer upon layer of stories.', photos: [] }
@@ -926,7 +921,10 @@
       ? loc.photos.map(p => `
           <div class="tmp-item">
             <img src="${p.url}" alt="${p.caption}" loading="lazy" />
-            <div class="tmp-caption">${p.caption}</div>
+            <div class="tmp-caption">
+              <div class="tmpc-date">${loc.date}</div>
+              <div class="tmpc-desc">${p.caption}</div>
+            </div>
           </div>`).join('')
       : '<div class="travel-modal-empty">' + (lang === 'zh' ? '更多照片待上传 ✈️' : 'More photos coming soon ✈️') + '</div>';
 
@@ -965,6 +963,7 @@
               <button class="tmn-btn" onclick="navigateModal(1)" ${idx >= total - 1 ? 'disabled' : ''} aria-label="Next">&#8594;</button>
             </div>
           </div>`;
+        classifyImageOrientation(nxtSlot);
 
 
         // Initialize hero-meta text: start hidden+shifted, then slide up
@@ -1080,10 +1079,30 @@
         <div class="travel-modal-card" data-slot="1"></div>
       </div>`;
 
+        classifyImageOrientation(overlay);
     if (window.innerWidth > 899) {
       overlay.classList.add('travel-modal-start');
       setTimeout(() => overlay.classList.remove('travel-modal-start'), 2500);
     }
+  }
+
+  // Classify images as portrait or landscape based on natural dimensions
+  function classifyImageOrientation(container) {
+    if (!container) return;
+    container.querySelectorAll(".tmp-item img").forEach(function(img) {
+      var check = function() {
+        if (img.naturalWidth) {
+          img.closest(".tmp-item").classList.add(
+            img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
+          );
+        }
+      };
+      if (img.complete && img.naturalWidth) {
+        check();
+      } else {
+        img.onload = check;
+      }
+    });
   }
   function navigateModal(dir) {
     const state = window._modalNavState;
