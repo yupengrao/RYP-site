@@ -83,7 +83,7 @@
 
   /* hero */
  .hero{display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center;margin-bottom:64px}
-  .avatar{
+  .avatar{opacity:0;transition:opacity .5s ease;
      width:168px;height:168px;border-radius:50%;
     background-image:url('https://s1.imagehub.cc/images/2026/07/10/2234a3b811a33cda68d9245b2cdc68da.jpg');
     background-size:cover;
@@ -92,6 +92,7 @@
     position:relative;
     overflow:hidden;
   }
+  .avatar.loaded{opacity:1}
   .avatar::after{
     content:"";position:absolute;inset:-6px;border-radius:50%;
     border:1.5px dashed rgba(15,191,159,.25);
@@ -183,7 +184,7 @@
   .edu-school{font-size:15px;font-weight:500;color:var(--ink);text-align:left;line-height:1.5}
   .edu-major{font-size:13px;color:var(--ink-soft);text-align:left;line-height:1.5}
   .edu-degree{font-size:12px;color:var(--green);font-weight:600;margin-top:2px}
- .edu-logo{height:24px;width:auto;border-radius:4px;display:block;max-width:100%;margin:0 auto;object-fit:contain}
+ .edu-logo{height:24px;width:auto;border-radius:4px;display:block;max-width:100%;margin:0 auto;object-fit:contain;opacity:0;transition:opacity .35s ease}
 
     /* ── travel destination cards — stacked fan layout ── */
   .travel-country{margin-bottom:28px}
@@ -411,8 +412,8 @@
     color:#fff;
     text-shadow:0 2px 8px rgba(0,0,0,.5);
   }
-  .travel-modal-hero-meta .tmm-name{font-size:20px;font-weight:700;letter-spacing:.5px}
-  .travel-modal-hero-meta .tmm-date{font-size:13px;opacity:.85;margin-top:2px}
+  .travel-modal-hero-meta .tmm-name{font-size:20px;font-weight:700;letter-spacing:.5px;transition:opacity .35s ease,transform .35s ease}
+  .travel-modal-hero-meta .tmm-date{font-size:13px;opacity:.85;margin-top:2px;transition:opacity .35s ease,transform .35s ease}
   .travel-modal-body{padding:20px 24px 24px}
   .travel-modal-desc{font-size:14.5px;line-height:1.7;color:var(--ink);margin-bottom:20px}
   .travel-modal-photos-title{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
@@ -961,6 +962,12 @@
             </div>
           </div>`;
 
+
+        // Initialize hero-meta text: start hidden+shifted, then slide up
+        nxtSlot.querySelectorAll(".tmm-name, .tmm-date").forEach(el => {
+          el.style.opacity = "0";
+          el.style.transform = "translateY(8px)";
+        });
         // 2) Set initial transform BEFORE display — the key to zero-gap
         nxtSlot.style.cssText =
           'display:block;position:absolute;top:0;left:0;right:0;bottom:0;' +
@@ -983,6 +990,15 @@
           nxtSlot.style.transition = 'opacity .28s ease,transform .28s ease';
           nxtSlot.style.opacity = '1';
           nxtSlot.style.transform = 'scale(1)';
+
+          // Animate hero-meta text in after card crossfade settles
+          setTimeout(() => {
+            if (overlay._navSeq !== mySeq) return;
+            nxtSlot.querySelectorAll(".tmm-name, .tmm-date").forEach(el => {
+              el.style.opacity = "";
+              el.style.transform = "";
+            });
+          }, 130);
         });
 
         // 5) After transition: swap active slot
@@ -1135,7 +1151,7 @@
     container.innerHTML = t.eduList.map(item => `
       <div class="edu-item">
         <div class="edu-time">${item.time}</div>
-        ${item.logo ? `<img class="edu-logo" src="${item.logo}" alt="${item.school}" onerror="this.style.display='none'"${item.logoH ? ` style="height:${item.logoH}px"` : ''} />` : `<div class="edu-school" style="grid-column:span 2">${item.school}</div>`}
+        ${item.logo ? `<img class="edu-logo" src="${item.logo}" alt="${item.school}" onerror="this.style.display='none'" onload="this.style.opacity='1'"${item.logoH ? ` style="height:${item.logoH}px"` : ''} />` : `<div class="edu-school" style="grid-column:span 2">${item.school}</div>`}
         ${item.logo ? `<div class="edu-school">${item.school}</div>` : ''}
         <div class="edu-major">
           <div>${item.major}</div>
@@ -1291,6 +1307,21 @@
   });
 
   setLang('zh');
+
+  // Preload avatar for fade-in
+  (function() {
+    const el = document.querySelector(".avatar");
+    if (!el) return;
+    const m = el.style.backgroundImage.match(/url\(["\x27]?([^"\x27)]+)["\x27]?\)/);
+    if (m && m[1]) {
+      const img = new Image();
+      img.onload = function(){ el.classList.add("loaded"); };
+      img.onerror = function(){ el.classList.add("loaded"); };
+      img.src = m[1];
+    } else {
+      el.classList.add("loaded");
+    }
+  })();
 </script>
 
 </body>
