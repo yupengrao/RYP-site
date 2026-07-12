@@ -256,6 +256,16 @@
     white-space:nowrap;
     display:none;
   }
+  .lc-bg{
+    position:absolute;inset:0;
+    background-size:cover;
+    background-position:center;
+    opacity:0;
+    transition:opacity .5s ease;
+    z-index:0;
+    pointer-events:none;
+  }
+  .lc-bg.loaded{opacity:1}
 
   /* ── hover: horizontal layout, show date ── */
   .location-card:hover{
@@ -494,14 +504,20 @@
     .location-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:10px;height:auto;overflow:visible;padding-top:0}
     .location-card{position:relative;top:0;left:0!important;width:100%;height:auto;aspect-ratio:16/9;min-height:90px;transform:none!important;-webkit-tap-highlight-color:transparent}
     .location-card .lc-inner{display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;padding:10px 12px;gap:2px}
-    .location-card .lc-name{position:static;writing-mode:horizontal-tb;font-size:13px}
-    .location-card .lc-date{display:block;font-size:10px}
+    .location-card .lc-name{position:static;writing-mode:horizontal-tb;font-size:13px;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+    .location-card .lc-date{display:block;font-size:10px;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
     .location-card.floated{transform:none!important}
     .location-card.floated .lc-name{position:static;writing-mode:horizontal-tb;font-size:13px}
     .location-card.floated .lc-date{display:block;font-size:10px}
 
     .location-card::before{background:linear-gradient(to top,rgba(0,0,0,.5) 0%,rgba(0,0,0,.1) 50%,transparent 100%)}
     .location-card:hover{transform:none!important;box-shadow:0 2px 10px -4px rgba(0,0,0,.1)}
+    .location-card:hover .lc-inner{display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;padding:10px 12px;gap:2px}
+    .location-card:hover .lc-name{position:static;writing-mode:horizontal-tb;font-size:13px;transform:scale(1.14)}
+    .location-card:hover .lc-date{display:block;font-size:10px;transform:scale(1.14)}
+    .location-card:nth-child(1) .lc-inner{display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;padding:12px 14px;gap:2px}
+    .location-card:nth-child(1) .lc-name{position:static;writing-mode:horizontal-tb;font-size:13px}
+    .location-card:nth-child(1) .lc-date{display:block;font-size:10px}
   
     /* travel modal: always show buttons on mobile */
     .travel-modal-close{opacity:1!important;pointer-events:auto!important}
@@ -827,7 +843,8 @@
     const container = document.getElementById('travelContent');
     if (!container) return;
     const renderCards = (locs, key) => locs.map((l, i) => `
-      <div class="location-card${l.img ? ' has-bg' : ''}${l.desc ? ' has-detail' : ''}"${l.img ? ` style="background-image:url('${l.img}')"` : ''} data-key="${key}" data-index="${i}">
+      <div class="location-card${l.img ? ' has-bg' : ''}${l.desc ? ' has-detail' : ''}" data-key="${key}" data-index="${i}">
+        ${l.img ? `<div class="lc-bg" style="background-image:url('${l.img}')"></div>` : ''}
         <div class="lc-inner">
           <span class="lc-name">${l.name}</span>
           <span class="lc-date">${l.date}</span>
@@ -880,6 +897,15 @@
         if (!loc || !loc.desc) return;
         openTravelModal(loc, lang, key, idx);
       });
+    });
+
+    // fade in travel card background images as they load
+    container.querySelectorAll('.lc-bg').forEach(el => {
+      const src = (el.style.backgroundImage || '').replace(/url\(['"]?(.*?)['"]?\)/,'$1');
+      if (!src) return;
+      const img = new Image();
+      img.onload = img.onerror = () => el.classList.add('loaded');
+      img.src = src;
     });
   }
 
