@@ -1001,7 +1001,9 @@
 
       const navLabel = (loc.name === '重庆' || loc.name === 'Chongqing')
         ? (lang === 'zh' ? '📸 两江四岸，十年，再回重庆' : '📸 Two Rivers · Ten Years · Back to Chongqing')
-        : (lang === 'zh' ? '📸 更多照片' : '📸 More Photos');
+        : (loc.name === '阿坝州' || loc.name === 'Aba Prefecture')
+          ? (lang === 'zh' ? '📸 向高远的天空' : '📸 Toward the Lofty Sky')
+          : (lang === 'zh' ? '📸 更多照片' : '📸 More Photos');
       const total = i18n[lang].travelData[key].length;
 
       const doSwitch = () => {
@@ -1131,7 +1133,9 @@
 
     const navLabel = (loc.name === '重庆' || loc.name === 'Chongqing')
       ? (lang === 'zh' ? '📸 两江四岸，十年，再回重庆' : '📸 Two Rivers · Ten Years · Back to Chongqing')
-      : (lang === 'zh' ? '📸 更多照片' : '📸 More Photos');
+      : (loc.name === '阿坝州' || loc.name === 'Aba Prefecture')
+        ? (lang === 'zh' ? '📸 向高远的天空' : '📸 Toward the Lofty Sky')
+        : (lang === 'zh' ? '📸 更多照片' : '📸 More Photos');
     const total = i18n[lang].travelData[key].length;
     overlay.innerHTML = `
       <div class="travel-modal-viewport" onclick="event.stopPropagation()">
