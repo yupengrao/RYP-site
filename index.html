@@ -273,8 +273,7 @@
     transition:opacity .5s ease;
     z-index:0;
     pointer-events:none;
-    will-change:opacity;
-  }
+    }
   .lc-bg.loaded{opacity:1}
 
   /* ── hover: horizontal layout, show date ── */
@@ -371,7 +370,7 @@
     animation:scaleIn .3s cubic-bezier(.4,0,.2,1);
   }
   .travel-modal-card{
-    width:100%;max-height:90vh;overflow-y:auto;display:none;
+    width:100%;max-height:90vh;overflow-y:auto;display:none;background:#fff;
   }
   .travel-modal-card.active{display:block}
   .travel-modal-card::-webkit-scrollbar{display:none}
@@ -942,9 +941,9 @@
     window._modalNavState = { key, idx, lang };
 
     const photosHtml = loc.photos && loc.photos.length > 0
-      ? loc.photos.map(p => `
+      ? loc.photos.map((p, i) => `
           <div class="tmp-item">
-            <img src="${p.url}" alt="${p.caption}" loading="lazy" title="${p.filename || p.title || ""}" />
+            <img ${i < 3 ? 'src="' + p.url + '"' : 'data-src="' + p.url + '"'} alt="${p.caption}" loading="lazy" title="${p.filename || p.title || ""}" />
             <div class="tmp-caption">
               <div class="tmpc-title">${p.title || ""}</div>
               <div class="tmpc-date">${loc.date}</div>
@@ -1135,43 +1134,59 @@
     var imgs = container.querySelectorAll(".tmp-item img");
     var total = imgs.length;
     if (total === 0) return;
-    var limit = Math.min(total, 5);
+    var BATCH = 3;
+    var limit = Math.min(total, BATCH);
     var loaded = 0;
     var revealed = false;
+
+    function loadNextBatch() {
+      var pending = container.querySelectorAll(".tmp-item img[data-src]");
+      var batch = Math.min(pending.length, BATCH);
+      for (var i = 0; i < batch; i++) {
+        var img = pending[i];
+        img.src = img.getAttribute('data-src');
+        img.removeAttribute('data-src');
+        img.onload = function() {
+          if (this.naturalWidth) {
+            var item = this.closest(".tmp-item");
+            if (item && !item.classList.contains('landscape') && !item.classList.contains('portrait')) {
+              item.classList.add(
+                this.naturalWidth > this.naturalHeight ? "landscape" : "portrait"
+              );
+            }
+          }
+        };
+        img.onerror = function(){};
+      }
+    }
+
+    function setOrientation(img) {
+      if (img.naturalWidth) {
+        var item = img.closest(".tmp-item");
+        if (item && !item.classList.contains('landscape') && !item.classList.contains('portrait')) {
+          item.classList.add(
+            img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
+          );
+        }
+      }
+    }
 
     function revealAll() {
       if (revealed) return;
       revealed = true;
-      // Set orientation classes for all loaded images
-      imgs.forEach(function(img) {
-        if (img.naturalWidth) {
-          var item = img.closest(".tmp-item");
-          if (item) {
-            item.classList.add(
-              img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
-            );
-          }
-        }
-      });
-      // Reveal all items at once
+      imgs.forEach(setOrientation);
       container.querySelectorAll(".tmp-item").forEach(function(item) {
         item.style.opacity = "1";
       });
+      loadNextBatch();
     }
 
     imgs.forEach(function(img) {
+      if (!img.hasAttribute('src')) return;
       function handler() {
         loaded++;
+        setOrientation(img);
         if (loaded >= limit) revealAll();
-        // Set orientation for images that load after revealAll
-        if (img.naturalWidth) {
-          var item = img.closest(".tmp-item");
-          if (item && !item.classList.contains('landscape') && !item.classList.contains('portrait')) {
-            item.classList.add(
-              img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
-            );
-          }
-        }
       }
       if (img.complete && img.naturalWidth) {
         handler();
@@ -1181,7 +1196,6 @@
       }
     });
 
-    // Safety timeout — reveal after 5s regardless
     setTimeout(revealAll, 5000);
   }
   function navigateModal(dir) {
@@ -1269,6 +1283,10 @@
         </div>
       </div>
     `).join('');
+    // Fallback: handle cached images on Windows where inline onload may not fire
+    container.querySelectorAll('.edu-logo').forEach(function(img) {
+      if (img.complete) img.style.opacity = '1';
+    });
   }
 
   function setLang(lang) {
