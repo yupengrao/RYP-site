@@ -1081,6 +1081,7 @@
           curSlot.innerHTML = '';
           nxtSlot.style.cssText = '';
           nxtSlot.classList.add('active');
+          nxtSlot.scrollTop = 0;
           // Animate viewport height from locked value to new card's natural height
           const _newH = nxtSlot.scrollHeight;
           viewport.style.height = _oldH + 'px';
