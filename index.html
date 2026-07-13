@@ -212,8 +212,8 @@
     border:1px solid var(--line);
     box-shadow:0 2px 10px -4px rgba(0,0,0,.1);
     -webkit-tap-highlight-color:transparent;
-    transition:transform .35s cubic-bezier(.4,0,.2,1),
-               box-shadow .35s cubic-bezier(.4,0,.2,1);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    will-change:transform;
   }
 
   .location-card::before{
@@ -254,9 +254,14 @@
   }
 
   .lc-date{
-    font-size:11px;color:var(--ink-soft);opacity:.85;
+    font-size:11px;color:var(--ink-soft);
     white-space:nowrap;
-    display:none;
+    display:block;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .35s ease;
+    position:absolute;
+    bottom:12px;left:14px;
   }
   .lc-bg{
     position:absolute;inset:0;
@@ -266,6 +271,7 @@
     transition:opacity .5s ease;
     z-index:0;
     pointer-events:none;
+    will-change:opacity;
   }
   .lc-bg.loaded{opacity:1}
 
@@ -277,35 +283,31 @@
     border-color:transparent;
   }
 
-  .location-card:hover .lc-inner{
-    display:flex;flex-direction:column;
-    justify-content:flex-end;align-items:flex-start;
-    padding:12px 14px;gap:2px;
-  }
-
   .location-card:hover .lc-name{
-    position:static;
+    position:absolute;
+    bottom:auto;right:auto;
+    top:auto;left:14px;
+    bottom:30px;
     writing-mode:horizontal-tb;
   }
 
   .location-card:hover .lc-date{
-    display:block;
+    opacity:1;
   }
 
   /* ── first card: always show preview (horizontal + date) ── */
-  .location-card:nth-child(1) .lc-inner{
-    display:flex;flex-direction:column;
-    justify-content:flex-end;align-items:flex-start;
-    padding:12px 14px;gap:2px;
-  }
+
 
   .location-card:nth-child(1) .lc-name{
-    position:static;
+    position:absolute;
+    bottom:auto;right:auto;
+    top:auto;left:14px;
+    bottom:30px;
     writing-mode:horizontal-tb;
   }
 
   .location-card:nth-child(1) .lc-date{
-    display:block;
+    opacity:1;
   }
 
   /* ── default stacking: same baseline, newest first ── */
@@ -967,7 +969,7 @@
       const doSwitch = () => {
         if (overlay._navSeq !== mySeq) return;
 
-        // Lock viewport height to current card's height during transition
+        // Lock viewport height to current card during transition
         const _oldH = viewport.offsetHeight;
         viewport.style.transition = 'height .35s cubic-bezier(.4,0,.2,1)';
         viewport.style.height = _oldH + 'px';
@@ -1040,11 +1042,10 @@
           nxtSlot.style.cssText = '';
           nxtSlot.classList.add('active');
           // Animate viewport height from locked value to new card's natural height
-          const _newH = nxtSlot.offsetHeight;
-          viewport.style.height = _oldH + 'px';  // re-lock (in case viewport shifted)
-          void viewport.offsetHeight;             // force reflow
-          viewport.style.height = _newH + 'px';   // animate to new height
-          // After height settles, clear the fixed height
+          const _newH = nxtSlot.scrollHeight;
+          viewport.style.height = _oldH + 'px';
+          void viewport.offsetHeight;
+          viewport.style.height = _newH + 'px';
           setTimeout(() => {
             viewport.style.height = '';
             viewport.style.transition = '';
