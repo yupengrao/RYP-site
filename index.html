@@ -421,6 +421,13 @@
   }
   .travel-modal-hero-meta .tmm-name{font-size:22px;font-weight:700;letter-spacing:.5px;transition:opacity .35s ease,transform .35s ease}
   .travel-modal-hero-meta .tmm-date{font-size:14px;opacity:.85;margin-top:2px;transition:opacity .35s ease,transform .35s ease}
+
+  .hero-reveal{
+    position:absolute;inset:0;z-index:1;
+    background:var(--bg);
+    pointer-events:none;
+    transition:opacity 0s;
+  }
   .travel-modal-body{padding:20px 24px 24px}
   .travel-modal-desc{font-size:16px;line-height:1.7;color:var(--ink);margin-bottom:25px}
   .travel-modal-photos-title{font-size:13px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:25px}
@@ -1011,13 +1018,14 @@
 
         // Lock viewport height to current card during transition
         const _oldH = viewport.offsetHeight;
-        viewport.style.transition = 'height .35s cubic-bezier(.4,0,.2,1)';
+        viewport.style.transition = 'height .55s cubic-bezier(.4,0,.2,1)';
         viewport.style.height = _oldH + 'px';
         curSlot.scrollTop = 0;
 
         // 1) Fill hidden slot with new content
         nxtSlot.innerHTML = `
           <div class="travel-modal-hero" style="background-image:url('${loc.img}')">
+            <div class="hero-reveal"></div>
             <div class="travel-modal-hero-meta">
               <div class="tmm-name">${loc.name}</div>
               <div class="tmm-date">${loc.date}</div>
@@ -1035,6 +1043,9 @@
           </div>`;
         classifyImageOrientation(nxtSlot);
 
+        // Immediately fade hero-reveal so cover is visible during card crossfade
+        const nxtReveal = nxtSlot.querySelector('.hero-reveal');
+        if (nxtReveal) nxtReveal.style.opacity = '0';
 
         // Initialize hero-meta text: start hidden+shifted, then slide up
         nxtSlot.querySelectorAll(".tmm-name, .tmm-date").forEach(el => {
@@ -1055,13 +1066,17 @@
         requestAnimationFrame(() => {
           if (overlay._navSeq !== mySeq) return;
 
+          // Hide old card's cover immediately (it won't participate in fade)
+          const oldHero = curSlot.querySelector('.travel-modal-hero');
+          if (oldHero) oldHero.style.opacity = '0';
+
           // old card exits
-          curSlot.style.transition = 'opacity .28s ease,transform .28s ease';
+          curSlot.style.transition = 'opacity .45s ease,transform .45s ease';
           curSlot.style.opacity = '0';
           curSlot.style.transform = 'scale(0.97)';
 
           // new card enters
-          nxtSlot.style.transition = 'opacity .28s ease,transform .28s ease';
+          nxtSlot.style.transition = 'opacity .45s ease,transform .45s ease';
           nxtSlot.style.opacity = '1';
           nxtSlot.style.transform = 'scale(1)';
 
@@ -1072,13 +1087,13 @@
               el.style.opacity = "";
               el.style.transform = "";
             });
-          }, 130);
+          }, 250);
         });
 
         // 5) After transition: swap active slot + smooth height transition
         const finish = () => {
           if (overlay._navSeq !== mySeq) return;
-          curSlot.style.cssText = 'display:none;';
+          curSlot.style.display = 'none';
           curSlot.classList.remove('active');
           curSlot.innerHTML = '';
           nxtSlot.style.cssText = '';
@@ -1092,10 +1107,10 @@
           setTimeout(() => {
             viewport.style.height = '';
             viewport.style.transition = '';
-          }, 360);
+          }, 560);
         };
         nxtSlot.addEventListener('transitionend', finish, { once: true });
-        setTimeout(finish, 320);
+        setTimeout(finish, 500);
       };
 
       // Preload hero image, then switch
@@ -1145,6 +1160,7 @@
         <button class="travel-modal-close" onclick="this.closest('.travel-modal-overlay').classList.replace('active','closing');setTimeout(()=>this.closest('.travel-modal-overlay').remove(),260)">&times;</button>
         <div class="travel-modal-card active" data-slot="0">
           <div class="travel-modal-hero" style="background-image:url('${loc.img}')">
+            <div class="hero-reveal"></div>
             <div class="travel-modal-hero-meta">
               <div class="tmm-name">${loc.name}</div>
               <div class="tmm-date">${loc.date}</div>
@@ -1165,6 +1181,9 @@
       </div>`;
 
         classifyImageOrientation(overlay);
+    // Fade in hero background for initial card (immediate)
+    const initReveal = overlay.querySelector('.travel-modal-card.active .hero-reveal');
+    if (initReveal) initReveal.style.opacity = '0';
     if (window.innerWidth > 899) {
       overlay.classList.add('travel-modal-start');
       setTimeout(() => overlay.classList.remove('travel-modal-start'), 2500);
