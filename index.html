@@ -88,7 +88,6 @@
  .hero{display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center;margin-bottom:64px}
   .avatar{opacity:0;transition:opacity .5s ease;
      width:168px;height:168px;border-radius:50%;
-    background-image:url('https://s1.imagehub.cc/images/2026/07/10/2234a3b811a33cda68d9245b2cdc68da.jpg');
     background-size:cover;
     background-position:center;
     box-shadow:var(--shadow);
@@ -102,6 +101,12 @@
     animation:spin 22s linear infinite;
   }
   @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes avatarSwitch{
+    0%{transform:scale(1);opacity:1}
+    40%{transform:scale(.85);opacity:.3}
+    100%{transform:scale(1);opacity:1}
+  }
+  .avatar.switching{animation:avatarSwitch .3s ease}
   .hero h1{font-family:'Space Grotesk';font-size:clamp(38px,5.5vw,58px);letter-spacing:-.5px;font-weight:700;line-height:1.05;margin-bottom:6px}
   .hero h1 em{font-style:normal;color:var(--blue-deep);background:linear-gradient(120deg,var(--blue-deep),var(--green));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
   .tagline{font-size:18px;color:var(--ink-soft);max-width:520px;line-height:1.6}
@@ -132,7 +137,6 @@
   }
   .side-ava{
     width:36px;height:36px;border-radius:50%;
-    background-image:url('https://s1.imagehub.cc/images/2026/07/10/2234a3b811a33cda68d9245b2cdc68da.jpg');
     background-size:cover;
     background-position:center;
     margin:0 auto 10px;
@@ -1533,19 +1537,49 @@
 
   setLang('zh');
 
-  // Preload avatar for fade-in
+  // Avatar: start with original, then shuffle unseen on click
   (function() {
     const el = document.querySelector(".avatar");
     if (!el) return;
-    const m = el.style.backgroundImage.match(/url\(["\x27]?([^"\x27)]+)["\x27]?\)/);
-    if (m && m[1]) {
-      const img = new Image();
-      img.onload = function(){ el.classList.add("loaded"); };
-      img.onerror = function(){ el.classList.add("loaded"); };
-      img.src = m[1];
-    } else {
-      el.classList.add("loaded");
-    }
+    const avatars = [
+      'https://s1.imagehub.cc/images/2026/07/10/2234a3b811a33cda68d9245b2cdc68da.jpg',
+      'https://s1.imagehub.cc/images/2026/07/13/2318aaf6e8a30f7fa70fb380bd0a53d8.jpg',
+      'https://s1.imagehub.cc/images/2026/07/13/a6273e2f01c1132a996fac7d669f5d7c.jpg',
+      'https://s1.imagehub.cc/images/2026/07/13/624aa6a85ef1b02a0c384dc24905dab4.jpg'
+    ];
+    // Show first avatar initially
+    let cur = 0;
+    const seen = new Set([0]);
+    el.style.backgroundImage = 'url(' + avatars[0] + ')';
+    el.style.cursor = 'pointer';
+    const img = new Image();
+    img.onload = function(){ el.classList.add("loaded"); };
+    img.onerror = function(){ el.classList.add("loaded"); };
+    img.src = avatars[0];
+    el.addEventListener('click', function() {
+      const remaining = [];
+      for (let i = 0; i < avatars.length; i++) {
+        if (!seen.has(i)) remaining.push(i);
+      }
+      if (remaining.length === 0) {
+        seen.clear();
+        seen.add(cur);
+        for (let i = 0; i < avatars.length; i++) {
+          if (!seen.has(i)) remaining.push(i);
+        }
+      }
+      const pick = remaining[Math.floor(Math.random() * remaining.length)];
+      seen.add(pick);
+      cur = pick;
+      // Animate switch: scale+fade, swap image at midpoint
+      el.classList.add('switching');
+      setTimeout(function() {
+        el.style.backgroundImage = 'url(' + avatars[pick] + ')';
+      }, 120);
+      setTimeout(function() {
+        el.classList.remove('switching');
+      }, 310);
+    });
   })();
 </script>
 
