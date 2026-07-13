@@ -926,14 +926,28 @@
       });
     });
 
-    // fade in travel card background images as they load
-    container.querySelectorAll('.lc-bg').forEach(el => {
-      const src = (el.style.backgroundImage || '').replace(/url\(['"]?(.*?)['"]?\)/,'$1');
-      if (!src) return;
-      const img = new Image();
-      img.onload = img.onerror = () => el.classList.add('loaded');
-      img.src = src;
+    // fade in travel card background images as they load (2 at a time)
+    var bgEls = container.querySelectorAll('.lc-bg');
+    var bgQueue = [];
+    bgEls.forEach(function(el) {
+      var src = (el.style.backgroundImage || '').replace(/url\(['"]?(.*?)['"]?\)/,'$1');
+      if (src) bgQueue.push({ el: el, src: src });
     });
+    function loadNextBg() {
+      var cnt = Math.min(bgQueue.length, 2);
+      for (var j = 0; j < cnt; j++) {
+        (function() {
+          var item = bgQueue.shift();
+          var img = new Image();
+          img.onload = img.onerror = function() {
+            item.el.classList.add('loaded');
+            if (bgQueue.length > 0) loadNextBg();
+          };
+          img.src = item.src;
+        })();
+      }
+    }
+    if (bgQueue.length > 0) loadNextBg();
   }
 
   function openTravelModal(loc, lang, key, idx, isNav) {
