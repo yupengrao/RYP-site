@@ -1013,6 +1013,7 @@
         const _oldH = viewport.offsetHeight;
         viewport.style.transition = 'height .35s cubic-bezier(.4,0,.2,1)';
         viewport.style.height = _oldH + 'px';
+        curSlot.scrollTop = 0;
 
         // 1) Fill hidden slot with new content
         nxtSlot.innerHTML = `
@@ -1048,6 +1049,7 @@
 
         // 3) Force reflow — browser must commit the initial state
         void nxtSlot.offsetHeight;
+        nxtSlot.scrollTop = 0;
 
         // 4) Kick off both transitions in the same frame
         requestAnimationFrame(() => {
