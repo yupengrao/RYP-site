@@ -370,6 +370,8 @@
     width:100%;max-height:90vh;overflow-y:auto;display:none;
   }
   .travel-modal-card.active{display:block}
+  .travel-modal-card::-webkit-scrollbar{display:none}
+  .travel-modal-card{-ms-overflow-style:none;scrollbar-width:none}
   .travel-modal-close{
     position:absolute;top:12px;right:12px;z-index:10;
     width:36px;height:36px;
@@ -965,6 +967,11 @@
       const doSwitch = () => {
         if (overlay._navSeq !== mySeq) return;
 
+        // Lock viewport height to current card's height during transition
+        const _oldH = viewport.offsetHeight;
+        viewport.style.transition = 'height .35s cubic-bezier(.4,0,.2,1)';
+        viewport.style.height = _oldH + 'px';
+
         // 1) Fill hidden slot with new content
         nxtSlot.innerHTML = `
           <div class="travel-modal-hero" style="background-image:url('${loc.img}')">
@@ -1024,7 +1031,7 @@
           }, 130);
         });
 
-        // 5) After transition: swap active slot
+        // 5) After transition: swap active slot + smooth height transition
         const finish = () => {
           if (overlay._navSeq !== mySeq) return;
           curSlot.style.cssText = 'display:none;';
@@ -1032,6 +1039,16 @@
           curSlot.innerHTML = '';
           nxtSlot.style.cssText = '';
           nxtSlot.classList.add('active');
+          // Animate viewport height from locked value to new card's natural height
+          const _newH = nxtSlot.offsetHeight;
+          viewport.style.height = _oldH + 'px';  // re-lock (in case viewport shifted)
+          void viewport.offsetHeight;             // force reflow
+          viewport.style.height = _newH + 'px';   // animate to new height
+          // After height settles, clear the fixed height
+          setTimeout(() => {
+            viewport.style.height = '';
+            viewport.style.transition = '';
+          }, 360);
         };
         nxtSlot.addEventListener('transitionend', finish, { once: true });
         setTimeout(finish, 320);
