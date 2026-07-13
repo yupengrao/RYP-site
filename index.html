@@ -405,6 +405,7 @@
     background-position:center;
     border-radius:16px 16px 0 0;
     overflow:hidden;
+    background-color:var(--sky);
   }
   .travel-modal-hero::after{
     content:'';
@@ -1162,6 +1163,15 @@
       function handler() {
         loaded++;
         if (loaded >= limit) revealAll();
+        // Set orientation for images that load after revealAll
+        if (img.naturalWidth) {
+          var item = img.closest(".tmp-item");
+          if (item && !item.classList.contains('landscape') && !item.classList.contains('portrait')) {
+            item.classList.add(
+              img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
+            );
+          }
+        }
       }
       if (img.complete && img.naturalWidth) {
         handler();
