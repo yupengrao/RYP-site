@@ -1129,23 +1129,48 @@
   // Classify images as portrait or landscape based on natural dimensions
   function classifyImageOrientation(container) {
     if (!container) return;
-    container.querySelectorAll(".tmp-item img").forEach(function(img) {
-      var item = img.closest(".tmp-item");
-      var reveal = function() {
+    var imgs = container.querySelectorAll(".tmp-item img");
+    var total = imgs.length;
+    if (total === 0) return;
+    var limit = Math.min(total, 5);
+    var loaded = 0;
+    var revealed = false;
+
+    function revealAll() {
+      if (revealed) return;
+      revealed = true;
+      // Set orientation classes for all loaded images
+      imgs.forEach(function(img) {
         if (img.naturalWidth) {
-          item.classList.add(
-            img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
-          );
+          var item = img.closest(".tmp-item");
+          if (item) {
+            item.classList.add(
+              img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
+            );
+          }
         }
+      });
+      // Reveal all items at once
+      container.querySelectorAll(".tmp-item").forEach(function(item) {
         item.style.opacity = "1";
-      };
+      });
+    }
+
+    imgs.forEach(function(img) {
+      function handler() {
+        loaded++;
+        if (loaded >= limit) revealAll();
+      }
       if (img.complete && img.naturalWidth) {
-        reveal();
+        handler();
       } else {
-        img.onload = reveal;
-        img.onerror = reveal;
+        img.onload = handler;
+        img.onerror = handler;
       }
     });
+
+    // Safety timeout — reveal after 5s regardless
+    setTimeout(revealAll, 5000);
   }
   function navigateModal(dir) {
     const state = window._modalNavState;
