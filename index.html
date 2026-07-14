@@ -1383,7 +1383,7 @@ photos: [
    container.innerHTML = t.eduList.map(item => `
       <div class="edu-item">
         <div class="edu-time">${item.time}</div>
-        ${item.logo ? `<img class="edu-logo" src="${item.logo}" alt="${item.school}" onerror="this.style.display='none'" onload="this.style.opacity='1'"${item.logoH ? ` style="height:${item.logoH}px"` : ''} />` : `<div class="edu-school" style="grid-column:span 2">${item.school}</div>`}
+        ${item.logo ? `<img class="edu-logo" src="${item.logo}" alt="${item.school}" onerror="this.style.display='none'"${item.logoH ? ` style="height:${item.logoH}px"` : ''} />` : `<div class="edu-school" style="grid-column:span 2">${item.school}</div>`}
         ${item.logo ? `<div class="edu-school">${item.school}</div>` : ''}
         <div class="edu-major">
           <div>${item.major}</div>
@@ -1391,10 +1391,26 @@ photos: [
         </div>
       </div>
     `).join('');
-    // Fallback: handle cached images on Windows where inline onload may not fire
-    container.querySelectorAll('.edu-logo').forEach(function(img) {
-      if (img.complete) img.style.opacity = '1';
-    });
+    // Wait for all logos to load, then reveal them together
+    const logos = container.querySelectorAll('.edu-logo');
+    if (logos.length > 0) {
+      let loaded = 0;
+      const total = logos.length;
+      function revealLogos() {
+        loaded++;
+        if (loaded >= total) {
+          logos.forEach(function(img) { img.style.opacity = '1'; });
+        }
+      }
+      logos.forEach(function(img) {
+        if (img.complete && img.naturalWidth) {
+          revealLogos();
+        } else {
+          img.onload = revealLogos;
+          img.onerror = revealLogos;
+        }
+      });
+    }
   }
 
   function setLang(lang) {
