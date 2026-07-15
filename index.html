@@ -483,7 +483,7 @@
     .edu-major{font-size:13px;text-align:center}
     .edu-logo{margin:0 auto 4px}
     .pub-item{flex-direction:column;gap:4px}
-    .chat-body{height:340px}
+    .chat-body{height:420px}
     .chat-input{flex-direction:column}
     .chat-input button{padding:13px}
     .topbar{flex-wrap:wrap;gap:12px}
@@ -1544,7 +1544,6 @@ photos: [
       }
     } finally {
       sendBtn.disabled = false;
-      input.focus();
     }
   }
   form.addEventListener('submit', function(e){ e.preventDefault(); var q = input.value.trim(); if (!q) return; ask(q); });
