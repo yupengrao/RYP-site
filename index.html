@@ -1483,36 +1483,36 @@ photos: [
 
   let conversationHistory = [];
 
-  async function callDeepseek(q) {
-    const userMsg = { role: 'user', content: q };
-    const context = [
-      { role: 'system', content: SYSTEM_PROMPT },
-      ...conversationHistory.slice(-20),
-      userMsg
-    ];
-    try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: context,
-          max_tokens: 500,
-          temperature: 0.8,
-          stream: false
-        })
-      });
-      if (!res.ok) return i18n[currentLang].fallback || '？。';
-      const data = await res.json();
-      const reply = data.choices[0].message.content;
-      conversationHistory.push(userMsg);
-      conversationHistory.push({ role: 'assistant', content: reply });
-      return reply;
-    } catch(e) {
-      return i18n[currentLang].fallback || '？。';
-    }
-  }
-
+ async function callDeepseek(q) {
+   const userMsg = { role: 'user', content: q };
+   const context = [
+     { role: 'system', content: SYSTEM_PROMPT },
+     ...conversationHistory.slice(-20),
+     userMsg
+   ];
+   try {
+     const res = await fetch(API_URL, {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+         model: 'deepseek-chat',
+         messages: context,
+         max_tokens: 500,
+         temperature: 0.8,
+         stream: false
+       })
+     });
+     if (!res.ok) return '？。';
+     const data = await res.json();
+     const reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
+     if (!reply) return '？。';
+     conversationHistory.push(userMsg);
+     conversationHistory.push({ role: 'assistant', content: reply });
+     return reply;
+   } catch(e) {
+     return '？。';
+   }
+ }
   function addMsg(text, who){
     const div = document.createElement('div');
     div.className = 'msg ' + who;
@@ -1532,27 +1532,31 @@ photos: [
   }
 
   async function ask(q){
-    addMsg(q, 'me');
-    input.value = '';
-    sendBtn.disabled = true;
-    const t = typing();
-    const delay = 600 + Math.random()*600;
-    await new Promise(r=>setTimeout(r, delay));
-    t.remove();
-    const reply = await callDeepseek(q);
-    const lines = reply.split('\n').filter(l => l.trim());
-    for (let i = 0; i < lines.length; i++) {
-      addMsg(lines[i].trim(), 'bot');
-      if (i < lines.length - 1) {
-        await new Promise(r => setTimeout(r, 300 + Math.random() * 200));
+    if (sendBtn.disabled) return;
+    try {
+      addMsg(q, 'me');
+      input.value = '';
+      sendBtn.disabled = true;
+      const t = typing();
+      const delay = 600 + Math.random()*600;
+      await new Promise(r=>setTimeout(r, delay));
+      t.remove();
+      const reply = await callDeepseek(q);
+      const lines = reply.split('\n').filter(l => l.trim());
+      for (let i = 0; i < lines.length; i++) {
+        addMsg(lines[i].trim(), 'bot');
+        if (i < lines.length - 1) {
+          await new Promise(r => setTimeout(r, 300 + Math.random() * 200));
+        }
       }
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
     }
-    sendBtn.disabled = false;
-    input.focus();
   }
 
-  form.addEventListener('submit', e=>{ e.preventDefault(); const q = input.value.trim(); if(!q) return; ask(q); });
-  document.getElementById('quick').addEventListener('click', e=>{ if(e.target.tagName === 'BUTTON' && !sendBtn.disabled){ ask(e.target.dataset.q); } });
+  form.addEventListener('submit', function(e){ e.preventDefault(); var q = input.value.trim(); if (!q) return; ask(q); });
+  document.getElementById('quick').addEventListener('click', function(e){ if (e.target.tagName === 'BUTTON' && !sendBtn.disabled && e.target.dataset.q){ ask(e.target.dataset.q); } });
 
   /* status badge management */
   const STATUS_OPTIONS = [
@@ -1607,50 +1611,53 @@ photos: [
 
   setLang('zh');
 
-  // Avatar: start with original, then shuffle unseen on click
-  (function() {
-    const el = document.querySelector(".avatar");
-    if (!el) return;
-    const avatars = [
-      'https://s1.imagehub.cc/images/2026/07/10/2234a3b811a33cda68d9245b2cdc68da.jpg',
-      'https://s1.imagehub.cc/images/2026/07/13/2318aaf6e8a30f7fa70fb380bd0a53d8.jpg',
+ // Avatar: start with original, then shuffle unseen on click
+ (function() {
+   const el = document.querySelector(".avatar");
+   const sideEl = document.querySelector(".side-ava");
+   if (!el) return;
+   const avatars = [
+     'https://s1.imagehub.cc/images/2026/07/10/2234a3b811a33cda68d9245b2cdc68da.jpg',
+     'https://s1.imagehub.cc/images/2026/07/13/2318aaf6e8a30f7fa70fb380bd0a53d8.jpg',
       'https://s1.imagehub.cc/images/2026/07/13/a6273e2f01c1132a996fac7d669f5d7c.jpg',
       'https://s1.imagehub.cc/images/2026/07/13/624aa6a85ef1b02a0c384dc24905dab4.jpg'
-    ];
-    // Show first avatar initially
-    let cur = 0;
-    const seen = new Set([0]);
-    el.style.backgroundImage = 'url(' + avatars[0] + ')';
-    el.style.cursor = 'pointer';
-    const img = new Image();
-    img.onload = function(){ el.classList.add("loaded"); };
-    img.onerror = function(){ el.classList.add("loaded"); };
-    img.src = avatars[0];
-    el.addEventListener('click', function() {
-      const remaining = [];
-      for (let i = 0; i < avatars.length; i++) {
-        if (!seen.has(i)) remaining.push(i);
-      }
-      if (remaining.length === 0) {
-        seen.clear();
-        seen.add(cur);
-        for (let i = 0; i < avatars.length; i++) {
-          if (!seen.has(i)) remaining.push(i);
-        }
-      }
-      const pick = remaining[Math.floor(Math.random() * remaining.length)];
-      seen.add(pick);
-      cur = pick;
-      // Animate switch: scale+fade, swap image at midpoint
-      el.classList.add('switching');
-      setTimeout(function() {
-        el.style.backgroundImage = 'url(' + avatars[pick] + ')';
-      }, 120);
-      setTimeout(function() {
-        el.classList.remove('switching');
-      }, 310);
-    });
-  })();
+   ];
+   // Show first avatar initially
+   let cur = 0;
+   const seen = new Set([0]);
+   el.style.backgroundImage = 'url(' + avatars[0] + ')';
+   if (sideEl) sideEl.style.backgroundImage = 'url(' + avatars[0] + ')';
+   el.style.cursor = 'pointer';
+   const img = new Image();
+   img.onload = function(){ el.classList.add("loaded"); };
+   img.onerror = function(){ el.classList.add("loaded"); };
+   img.src = avatars[0];
+   el.addEventListener('click', function() {
+     const remaining = [];
+     for (let i = 0; i < avatars.length; i++) {
+       if (!seen.has(i)) remaining.push(i);
+     }
+     if (remaining.length === 0) {
+       seen.clear();
+       seen.add(cur);
+       for (let i = 0; i < avatars.length; i++) {
+         if (!seen.has(i)) remaining.push(i);
+       }
+     }
+     const pick = remaining[Math.floor(Math.random() * remaining.length)];
+     seen.add(pick);
+     cur = pick;
+     // Animate switch: scale+fade, swap image at midpoint
+     el.classList.add('switching');
+     setTimeout(function() {
+       el.style.backgroundImage = 'url(' + avatars[pick] + ')';
+       if (sideEl) sideEl.style.backgroundImage = 'url(' + avatars[pick] + ')';
+     }, 120);
+     setTimeout(function() {
+       el.classList.remove('switching');
+     }, 310);
+   });
+ })();
 </script>
 
 </body>
