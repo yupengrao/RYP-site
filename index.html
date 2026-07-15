@@ -457,7 +457,8 @@
   .typing i:nth-child(3){animation-delay:.4s}
   @keyframes blink{50%{opacity:1}}
   .quick{display:flex;flex-wrap:wrap;gap:8px;padding:14px 22px;border-top:1px solid var(--line);background:#fff}
-  .quick button{font-family:inherit;font-size:13px;color:var(--blue-deep);background:var(--sky);border:1px solid transparent;padding:7px 14px;border-radius:999px;cursor:pointer;transition:.2s}
+  .quick button{font-family:inherit;font-size:13px;color:var(--blue-deep);background:var(--sky);border:1px solid transparent;padding:7px 14px;border-radius:999px;cursor:pointer;transition:opacity .35s ease,transform .35s ease,background .2s}
+  .quick button.fade-out{opacity:0;transform:translateY(6px)}
   .quick button:hover{background:var(--mint);color:var(--ink);transform:translateY(-1px)}
   .chat-input{display:flex;gap:10px;padding:14px 22px 22px;background:#fff}
   .chat-input input{flex:1;font-family:inherit;font-size:15px;padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);outline:none;transition:.2s}
@@ -1370,9 +1371,11 @@ photos: [
     document.getElementById('input').placeholder = t.inputPlaceholder;
    document.getElementById('send').textContent = t.sendBtn;
    const quickBtns = document.querySelectorAll('#quick button');
-    t.quickQs.forEach((q, i) => {
-      if (quickBtns[i]) { quickBtns[i].textContent = q; quickBtns[i].dataset.q = q; }
-    });
+    if (!firstQuestionAsked) {
+      t.quickQs.forEach((q, i) => {
+        if (quickBtns[i]) { quickBtns[i].textContent = q; quickBtns[i].dataset.q = q; }
+      });
+    }
     const chatBody = document.getElementById('chatBody');
     chatBody.innerHTML = '';
     addMsg(t.welcomeMsg, 'bot');
@@ -1400,6 +1403,13 @@ photos: [
 - **同时保持简洁**：用最精炼的语言表达完整信息，不啰嗦、不重复、不说废话。
 - 判断标准：如果对方的问题看起来是认真的（包含具体问句、专业词汇、或长度超过10个字），优先正经回答而非调侃。
 - 即使使用高频词（如「确实」「好之」）也必须在正经回答之后再使用，不能替代正经回复。
+### 8. 推荐后续问题规则
+
+- 在每次回复的**末尾**，额外添加一行 "[SUGGEST:你想问的问题]" 格式的推荐后续问题（不包含在正文中）。
+- 该问题应基于对话内容生成，推荐一个用户接下来可能感兴趣的问题方向。
+- 例如：如果对方问了你去过哪里，你在回答末尾添加 "[SUGGEST:你最喜欢哪个地方？]"。
+- 即使回复只有一句话，也必须包含 [SUGGEST:...] 标记。这条规则覆盖其他所有规则中的字数限制。
+
 ### 对话示例（参考以下风格回复）\n\n**吐槽类：**\n对方：今天又被老板骂了\n你：何意味？你PPT又做成答辩了？\n\n对方：学校又扣我钱了\n你：我被学校做局了。想不通就对了，想通了你就成领导了。\n\n**安慰类：**\n对方：我挂了一科，好难过\n你：好事一桩，下个学期就可以名正言顺不干活了。\n\n对方：最近真的好累，啥都不想干了\n你：事已至此，先吃饭吧。总不能真死了。\n\n**分享类：**\n对方：西安有啥好吃的推荐吗\n你：魏家凉皮的鲜虾堡太美味了，给120分。我们江西人吃完都沉默了。\n\n对方：我今天看到了个特别离谱的事\n你：快说，我需要一点乐子续命。\n\n**争论/阴阳怪气类：**\n对方：你这个想法不太对，应该按我说的来\n你：哇塞，好厉害，那按你的来。\n\n对方：我觉得你就是太懒了\n你：那咋办呢？总不能卷死自己吧。\n\n**敷衍类：**\n对方：长篇大论发了一大堆\n你：好之。OK。\n\n对方：在吗在吗在吗\n你：？\n\n**热情类：**\n对方：要不要去看草东的现场\n你：一定要去！抢不到票我会后悔一辈子！\n\n对方：推荐个好吃的外卖\n你：塔斯汀的香辣鸡腿堡，别的都是异端。\n\n### 你的个人记忆（你必须<emphasis>基于以下事实</emphasis>回答）\n\n【身份】饶渝鹏，2003年9月25日出生（天秤座，处女座尾后几天），出生在浙江温州，江西抚州东乡人，有一个姐姐。中国石油大学 材料工程 博士二年级（2025级），2021–2025 本科就读于中国石油大学新能源科学与工程，2025年1月–5月国家公派赴美国塔尔萨大学访问。
 【成长经历】很小的时候在外婆家重庆酉阳生活过，幼儿园在湖南邵阳度过，在江西东乡上的小学和中学。童年的每一段记忆都很美好，但上学之后就不一样了。
 【研究方向】当前主攻人工智能驱动科学研究（AI for Science），以石墨烯材料为核心，用机器学习/深度学习加速石墨烯智能设计与制造，自动化提取拉曼光谱数据。此前研究方向是新能源催化材料（2023–2025），涉及光催化/电催化CO₂还原和电解水制氢。
@@ -1416,6 +1426,7 @@ photos: [
   
   
   let conversationHistory = [];
+  let firstQuestionAsked = false;
  async function callDeepseek(q) {
    const userMsg = { role: 'user', content: q };
    const context = [
@@ -1474,13 +1485,45 @@ photos: [
       // Brief natural pause before removing typing (simulates "finished thinking")
       await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
       t.remove();
-      // Show response with natural line-by-line timing
+      // Show response with natural human-like typing timing
       const lines = reply.split('\n').filter(l => l.trim());
-      var lineDelay = lines.length > 3 ? 200 : 350;
       for (let i = 0; i < lines.length; i++) {
-        addMsg(lines[i].trim(), 'bot');
+        var msg = lines[i].trim();
+        // Skip SUGGEST line (handled below)
+        if (msg.startsWith('[SUGGEST:')) continue;
+        addMsg(msg, 'bot');
         if (i < lines.length - 1) {
-          await new Promise(r => setTimeout(r, lineDelay + Math.random() * 200));
+          // Natural pause: shorter for short lines, longer for long lines
+          var pause = 600 + Math.random() * 500;
+          if (msg.length > 20) pause += 300;
+          await new Promise(r => setTimeout(r, pause));
+        }
+      }
+      // Parse AI's suggested follow-up question and refresh quick buttons
+      var suggestMatch = reply.match(/\[SUGGEST:([^\]]+)\]/);
+      var predictedQ = suggestMatch ? suggestMatch[1] : '';
+      if (predictedQ) {
+        var qDiv = document.getElementById('quick');
+        if (qDiv) {
+          if (!firstQuestionAsked) {
+            firstQuestionAsked = true;
+            // Fade out old buttons, then replace with predicted one
+            qDiv.querySelectorAll('button').forEach(function(b){ b.classList.add('fade-out'); });
+            setTimeout(function() {
+              qDiv.innerHTML = '<button data-q="' + predictedQ.replace(/"/g, '&quot;') + '">' + predictedQ + '</button>';
+            }, 320);
+          } else {
+            // Fade out, update text, fade back in
+            var btn = qDiv.querySelector('button');
+            if (btn) {
+              btn.classList.add('fade-out');
+              setTimeout(function() {
+                btn.textContent = predictedQ;
+                btn.dataset.q = predictedQ;
+                btn.classList.remove('fade-out');
+              }, 320);
+            }
+          }
         }
       }
     } finally {
