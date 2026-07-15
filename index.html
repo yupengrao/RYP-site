@@ -373,9 +373,9 @@
     overflow:hidden;
     animation:scaleIn .3s cubic-bezier(.4,0,.2,1);
   }
-  .travel-modal-card{
-    width:100%;max-height:90vh;overflow-y:auto;display:none;background:#fff;
-  }
+ .travel-modal-card{
+   width:100%;max-height:90vh;overflow-y:auto;overflow-x:hidden;display:none;background:#fff;
+ }
   .travel-modal-card.active{display:block}
   .travel-modal-card::-webkit-scrollbar{display:none}
   .travel-modal-card{-ms-overflow-style:none;scrollbar-width:none}
@@ -542,12 +542,14 @@
     .location-card:nth-child(1) .lc-date{display:block;font-size:10px;position:static;opacity:1}
   
     /* travel modal: always show buttons on mobile */
-    .travel-modal-close{opacity:1!important;pointer-events:auto!important}
-   .travel-modal-nav{opacity:1!important;pointer-events:auto!important}
-    /* mobile: landscape photos - title+date on right, desc full width below */
-    .travel-modal-photos .tmp-item.landscape{display:block;overflow:hidden}
-    .travel-modal-photos .tmp-item.landscape img{float:left;width:75%!important;margin-right:16px}
-    .travel-modal-photos .tmp-item.landscape .tmpc-desc{clear:both}
+  .travel-modal-close{opacity:1!important;pointer-events:auto!important}
+  .travel-modal-nav{opacity:1!important;pointer-events:auto!important}
+  /* mobile: landscape — 3/4 image left, title+date right, desc full-width below */
+  .travel-modal-photos .tmp-item.landscape{display:block;overflow:hidden}
+  .travel-modal-photos .tmp-item.landscape img{float:left;width:75%!important;margin-right:16px}
+  .travel-modal-photos .tmp-item.landscape .tmpc-desc{clear:both}
+  .travel-modal-photos .tmp-item.landscape .tmpc-title{word-break:break-word;overflow-wrap:break-word}
+  .travel-modal-photos .tmp-item.landscape .tmpc-date{word-break:break-word;overflow-wrap:break-word}
 }
 </style>
 <base target="_blank">
@@ -1025,10 +1027,10 @@ photos: [
 
     const photosHtml = loc.photos && loc.photos.length > 0
       ? loc.photos.map((p, i) => `
-          <div class="tmp-item">
-            <img ${i < 3 ? 'src="' + p.url + '"' : 'data-src="' + p.url + '"'} alt="${p.caption}" loading="lazy" title="${p.filename || p.title || ""}" />
-            <div class="tmp-caption">
-              <div class="tmpc-title">${p.title || ""}</div>
+         <div class="tmp-item ${p.portrait ? 'portrait' : 'landscape'}">
+           <img ${i < 3 ? 'src="' + p.url + '"' : 'data-src="' + p.url + '"'} alt="${p.caption}" loading="lazy" title="${p.filename || p.title || ""}" />
+           <div class="tmp-caption">
+             <div class="tmpc-title">${p.title || ""}</div>
               <div class="tmpc-date">${loc.date}</div>
               <div class="tmpc-desc">${p.caption}</div>
             </div>
@@ -1095,10 +1097,10 @@ photos: [
           el.style.transform = "translateY(8px)";
         });
         // 2) Set initial transform BEFORE display — the key to zero-gap
-        nxtSlot.style.cssText =
-          'display:block;position:absolute;top:0;left:0;right:0;bottom:0;' +
-          'width:100%;max-height:90vh;overflow-y:auto;' +
-          'opacity:0;transform:scale(0.97);pointer-events:none;';
+       nxtSlot.style.cssText =
+         'display:block;position:absolute;top:0;left:0;right:0;bottom:0;' +
+         'width:100%;max-height:90vh;overflow-y:auto;overflow-x:hidden;' +
+         'opacity:0;transform:scale(0.97);pointer-events:none;';
 
         // 3) Force reflow — browser must commit the initial state
         void nxtSlot.offsetHeight;
@@ -1252,31 +1254,33 @@ photos: [
         var img = pending[i];
         img.src = img.getAttribute('data-src');
         img.removeAttribute('data-src');
-        img.onload = function() {
-          if (this.naturalWidth) {
-            var item = this.closest(".tmp-item");
-            if (item && !item.classList.contains('landscape') && !item.classList.contains('portrait')) {
-              item.classList.add(
-                this.naturalWidth > this.naturalHeight ? "landscape" : "portrait"
-              );
-            }
-          }
-          loadNextBatch();
+       img.onload = function() {
+         if (this.naturalWidth) {
+           var item = this.closest(".tmp-item");
+           if (item) {
+             item.classList.remove('landscape', 'portrait');
+             item.classList.add(
+               this.naturalWidth > this.naturalHeight ? "landscape" : "portrait"
+             );
+           }
+         }
+         loadNextBatch();
         };
         img.onerror = function(){};
       }
     }
 
-    function setOrientation(img) {
-      if (img.naturalWidth) {
-        var item = img.closest(".tmp-item");
-        if (item && !item.classList.contains('landscape') && !item.classList.contains('portrait')) {
-          item.classList.add(
-            img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
-          );
-        }
-      }
-    }
+   function setOrientation(img) {
+     if (img.naturalWidth) {
+       var item = img.closest(".tmp-item");
+       if (item) {
+         item.classList.remove('landscape', 'portrait');
+         item.classList.add(
+           img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
+         );
+       }
+     }
+   }
 
     function revealAll() {
       if (revealed) return;
